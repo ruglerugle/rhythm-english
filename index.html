@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英語リズム・トレーニング</title>
+<meta name="description" content="強く読む音だけを手拍子に合わせて唱える練習で、速い英語がゆっくり聞こえてくる。英語の「強勢拍リズム」を中学生にもわかるように解説し、Level 1〜ラスボスまで段階的に練習できる無料サイト。">
+<link rel="canonical" href="https://rhythm-english.habatakijuku.com/">
+<meta property="og:title" content="英語リズム・トレーニング">
+<meta property="og:description" content="強く読む音だけを手拍子に合わせて唱える練習で、速い英語がゆっくり聞こえてくる。">
+<meta property="og:url" content="https://rhythm-english.habatakijuku.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://rhythm-english.habatakijuku.com/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='6' cy='16' r='5' fill='%23c4502f'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23b8ab9a'/%3E%3Ccircle cx='26' cy='16' r='5' fill='%23c4502f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f1e7;
+  --paper: #fffdf8;
+  --ink: #2a2620;
+  --muted: #776c5f;
+  --line: #e4dacb;
+  --accent: #c4502f;
+  --accent-soft: #fbe7df;
+  --weak: #9a8f82;
+  --hl: #ffe39a;
+  --ok: #2e8b57;
+  --ng: #c8433a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+  line-height: 1.75;
+}
+.en { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+header.hero {
+  background: linear-gradient(135deg, #3a2a24, #5a3427);
+  color: #fff; padding: 36px 16px 30px; text-align: center;
+}
+.hero h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 5vw, 2.3rem); font-weight: 900; letter-spacing: .04em; }
+.hero p { margin: 0 auto; max-width: 640px; color: #f3dfd3; }
+.hero .dots { font-size: 1.4rem; letter-spacing: .3em; margin-bottom: 4px; color: #f1a07f; }
+nav.toc {
+  position: sticky; top: 0; z-index: 10; background: rgba(246,241,231,.95);
+  border-bottom: 1px solid var(--line); backdrop-filter: blur(4px);
+}
+nav.toc ul { display: flex; gap: 6px; list-style: none; margin: 0 auto; padding: 8px 16px; max-width: 880px; overflow-x: auto; }
+nav.toc a {
+  display: block; white-space: nowrap; padding: 4px 12px; border-radius: 999px;
+  text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--line); font-size: .9rem;
+}
+nav.toc a:hover { background: var(--accent-soft); }
+main { max-width: 880px; margin: 0 auto; padding: 8px 16px 60px; }
+section.card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+  padding: 22px 20px; margin: 22px 0; box-shadow: 0 2px 0 rgba(0,0,0,.03);
+}
+section.card > h2 { margin: 0 0 10px; font-size: 1.35rem; display: flex; align-items: center; gap: 10px; }
+.badge {
+  display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: none;
+  border-radius: 50%; color: #fff; font-size: 1rem;
+  background: linear-gradient(#e07a52, #b44a2c);
+}
+h3 { font-size: 1.08rem; margin: 22px 0 6px; }
+p { margin: 8px 0; }
+.note { font-size: .88rem; color: var(--muted); }
+.key { background: #fff6d6; border: 1px solid #ecdca0; border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+.btn-primary, .btn {
+  font: inherit; cursor: pointer; border-radius: 10px; padding: 8px 16px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 6px; touch-action: manipulation;
+}
+.btn-primary {
+  color: #fff; border: 1px solid #94391f;
+  background: linear-gradient(#e07a52, #b44a2c); box-shadow: 0 3px 0 #7a2f19;
+}
+.btn-primary:hover { background: linear-gradient(#e88a63, #be5434); }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 #7a2f19; }
+.btn { color: var(--ink); background: #fff; border: 1px solid var(--line); }
+.btn:hover { background: #f7efe3; }
+.btn[disabled], .btn-primary[disabled] { opacity: .5; cursor: default; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; align-items: center; }
+
+/* ---- lane（拍の図） ---- */
+.lane-wrap { margin: 10px 0; }
+.lane-label { font-size: .8rem; color: var(--muted); margin-bottom: 2px; }
+.lane {
+  position: relative; display: flex; background: #fff;
+  border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-height: 92px;
+}
+.lane.active { border-color: #e2a48c; box-shadow: 0 0 0 3px #fbe1d6; }
+.col {
+  flex: 1 1 0; min-width: 0; position: relative;
+  border-left: 2px solid #f1d5c9;
+  padding: 24px 4px 10px 6px;
+  display: flex; flex-wrap: wrap; align-items: baseline; align-content: center; column-gap: 5px;
+}
+.col.rest { border-left: none; background: #faf6ee; justify-content: flex-end; }
+.col .num { position: absolute; top: 3px; left: 6px; font-size: .72rem; color: #c9a796; font-weight: 700; }
+.col.rest .num { color: #bdb3a6; font-weight: 500; }
+.col.pulse { animation: pulse .28s ease-out; }
+@keyframes pulse { from { background: #ffd9c8; } to { background: transparent; } }
+.ch { white-space: nowrap; }
+.s, .w { border-radius: 4px; transition: background .08s; }
+.s { font-weight: 800; color: var(--accent); font-size: clamp(1.02rem, 3.4vw, 1.45rem); display: inline-block; }
+.w { color: var(--weak); font-size: .86rem; }
+.col.k2 .w { font-size: .8rem; }
+.col.k3 .w { font-size: .74rem; }
+.col.k4 .w { font-size: .68rem; }
+.hy { color: #cbbfb1; font-size: .8rem; }
+.s.on, .w.on { background: var(--hl); color: var(--ink); }
+.s.on { animation: pop .22s ease-out; }
+@keyframes pop { from { transform: scale(1.25); } to { transform: scale(1); } }
+.lane.mora .s { font-size: clamp(.95rem, 3vw, 1.2rem); }
+.lane.mora .col { padding-left: 3px; padding-right: 2px; justify-content: center; }
+.ph {
+  position: absolute; top: 0; bottom: 0; width: 2px; left: 0; background: var(--accent);
+  opacity: .55; display: none; pointer-events: none;
+}
+.lane.active .ph { display: block; }
+.status { min-height: 1.8em; font-weight: 700; color: var(--accent); }
+.status.big { font-size: 1.5rem; }
+
+/* ---- 表 ---- */
+table.tbl { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 8px 0; }
+.tbl th, .tbl td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+.tbl th { background: #f7efe3; font-weight: 700; }
+.tbl-scroll { overflow-x: auto; }
+.strong-word { color: var(--accent); font-weight: 800; }
+.weak-word { color: var(--weak); }
+
+/* ---- クイズ ---- */
+.quiz-q { margin: 10px 0; padding: 10px; border: 1px dashed var(--line); border-radius: 10px; }
+.quiz-words { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.qw {
+  font: inherit; font-family: "Segoe UI", Arial, sans-serif; font-size: 1.05rem; cursor: pointer;
+  padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink);
+}
+.qw.sel { background: var(--accent-soft); border-color: #e2a48c; color: var(--accent); font-weight: 800; }
+.qw.right { background: #e3f4e9; border-color: #8cc9a3; }
+.qw.wrong { background: #fbe3e1; border-color: #e3a29c; }
+.qw.miss { outline: 2px dashed var(--ok); }
+.quiz-result { font-weight: 700; }
+
+/* ---- ワーク ---- */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+.tab {
+  font: inherit; cursor: pointer; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: #fff; color: var(--ink); font-weight: 700;
+}
+.tab.on { color: #fff; border-color: #94391f; background: linear-gradient(#e07a52, #b44a2c); }
+.tab .pct { font-size: .75rem; font-weight: 500; margin-left: 4px; opacity: .85; }
+.level-desc { margin: 0 0 10px; }
+.sent-list { display: grid; gap: 6px; margin: 10px 0; }
+.sent {
+  font: inherit; text-align: left; cursor: pointer; display: flex; gap: 10px; align-items: center;
+  padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink);
+}
+.sent:hover { background: #fbf6ee; }
+.sent.on { border-color: #e2a48c; background: var(--accent-soft); }
+.sent .en { flex: 1; }
+.sent .en b { color: var(--accent); }
+.sent .meta { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+.sent .tick { width: 1.2em; color: var(--ok); font-weight: 900; }
+.player {
+  border: 2px solid #ecc9b9; border-radius: 14px; padding: 14px; background: #fffaf6; margin-top: 12px;
+}
+.player .ja { color: var(--muted); font-size: .92rem; margin: 4px 0; }
+.player ul.notes { margin: 6px 0; padding-left: 1.2em; font-size: .9rem; }
+.controls { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin: 10px 0; }
+.ctl { display: flex; align-items: center; gap: 8px; font-size: .9rem; flex-wrap: wrap; }
+.ctl input[type=range] { flex: 1; min-width: 120px; accent-color: #b44a2c; }
+.ctl select { font: inherit; padding: 3px 6px; border-radius: 8px; border: 1px solid var(--line); background: #fff; max-width: 100%; }
+.ctl input[type=checkbox] { accent-color: #b44a2c; width: 18px; height: 18px; }
+.ctl .val { font-weight: 800; min-width: 3.2em; }
+.rec-box { margin-top: 8px; }
+.rec-box audio { width: 100%; max-width: 420px; }
+.best { font-size: .85rem; color: var(--muted); }
+.warn { color: var(--ng); font-size: .88rem; }
+
+/* ---- 聞き取り ---- */
+.guess { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.guess span {
+  min-width: 70px; text-align: center; padding: 10px 12px; border-radius: 10px; font-weight: 800; font-size: 1.2rem;
+  background: #fff; border: 2px dashed #e2a48c; color: var(--accent);
+}
+footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20px 16px 40px; }
+
+@media (max-width: 560px) {
+  section.card { padding: 18px 14px; }
+  .col { padding: 22px 2px 8px 4px; column-gap: 3px; }
+  .w { font-size: .76rem; }
+  .col.k2 .w { font-size: .72rem; }
+  .col.k3 .w, .col.k4 .w { font-size: .64rem; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="dots" aria-hidden="true">● · ● · ●</div>
+  <h1>英語リズム・トレーニング</h1>
+  <p>英語は「強く読む音」だけが手拍子のように等間隔に並ぶことばです。その手拍子に合わせて唱える練習をすると、速くて聞き取れなかった英語が、ゆっくり聞こえてきます。</p>
+</header>
+
+<nav class="toc" aria-label="もくじ">
+  <ul>
+    <li><a href="#why">① しくみ</a></li>
+    <li><a href="#words">② 強い語・弱い語</a></li>
+    <li><a href="#work">③ ワーク</a></li>
+    <li><a href="#listen">④ 聞き取り</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ① しくみ -->
+<section class="card" id="why">
+  <h2><span class="badge">1</span>英語が速く聞こえるのはなぜ？</h2>
+  <p>ネイティブの英語を聞いて「知っている単語なのに追いつけない」と感じたことはありませんか。耳が悪いわけでも、単語力が足りないわけでもありません。原因は、<b>日本語と英語で「リズムの刻み方」がちがう</b>ことにあります。</p>
+
+  <h3>日本語は「かな1つ」ずつ同じ長さ</h3>
+  <p>日本語では、かな1文字ぶんの音（「拍（はく）」とよびます）が、だいたい同じ長さで並びます。「ねこがねずみをおう」なら、ね・こ・が・ね・ず・み・を・お・う の9拍。どの音も同じ重さで、1つずつはっきり発音します。</p>
+  <div class="lane-wrap">
+    <div class="lane-label">日本語：かな1つごとに1拍</div>
+    <div id="laneJa"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" id="playJa">▶ 日本語のリズムを聞く</button>
+    <span class="status" id="statusJa"></span>
+  </div>
+
+  <h3>英語は「強い音」だけが同じ間隔</h3>
+  <p>英語はちがいます。文の中には<b>強く読む音</b>と<b>弱く読む音</b>があり、手拍子のように等間隔に並ぶのは強い音だけです。弱い音は、次の強い音に間に合うように、強い音と強い音のすき間へ<b>短く・軽く押しこまれます</b>。</p>
+  <p>下の図では、太い赤の文字が強い音、小さい灰色の文字が弱い音です。縦の線が手拍子のタイミング（拍）。左はしの薄い色の列は「すき間」で、最初の強い音より前にある弱い音はここに入ります。</p>
+  <div class="lane-wrap">
+    <div class="lane-label">英語：強い音ごとに1拍（手拍子は3回）</div>
+    <div id="laneEn"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" id="playEn">▶ 英語のリズムを聞く</button>
+    <span class="status" id="statusEn"></span>
+  </div>
+  <p>このように強い音を軸にリズムを刻む性質を<b>強勢拍（きょうせいはく）リズム</b>といいます。「強勢」は「強く読むこと」という意味です。</p>
+
+  <h3>単語が増えても、かかる時間は同じ</h3>
+  <p>この性質のおもしろいところは、<b>強い音の数が同じなら、単語がいくつ増えても、文を言う時間がほとんど変わらない</b>ことです。下の4つの文は、どれも強い音が cats・chase・mice の3つ。単語の数は3つから8つまで増えますが、手拍子3回で言い終わります。増えた the や will や have been は、すき間に押しこまれるだけです。</p>
+  <div id="ladder"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="playLadder">▶ 4つの文を続けて聞く</button>
+    <span class="status" id="statusLadder"></span>
+  </div>
+  <p class="note">※ 音は手拍子と目印だけです。実際の発音を聞くには、③ワークの「🔊 お手本」を使ってください。</p>
+
+  <div class="key">
+    <b>ここがポイント</b><br>
+    英語が速く聞こえるのは、押しこまれた弱い音まで<b>全部</b>聞き取ろうとするからです。ネイティブ自身、弱い音ははっきり言っていません。<b>強い音だけを手拍子のように追いかければ</b>、英語はゆったりしたリズムで聞こえてきます。そして、自分でそのリズムで唱えられるようになると、耳もそのリズムで聞けるようになります。
+  </div>
+  <p class="note">※ 実際の会話では、強い音の間隔はぴったり同じではなく「だいたい同じ」です。それでも、日本語のように全部の音を同じ長さで並べるのとは、まったくちがうリズムになります。</p>
+</section>
+
+<!-- ② 強い語・弱い語 -->
+<section class="card" id="words">
+  <h2><span class="badge">2</span>強く読む語・弱く読む語</h2>
+  <p>どの語を強く読むかには、だいたいの決まりがあります。ひとことで言うと、<b>「意味の中身」を運ぶ語は強く、「文の組み立て」を手伝う語は弱く</b>読みます。</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <tr><th>強く読む語（内容語）</th><th>弱く読む語（機能語）</th></tr>
+    <tr>
+      <td>
+        名詞（もの・人の名前）<span class="en strong-word">cat, Tom, school</span><br>
+        動詞（動きを表す語）<span class="en strong-word">eat, go, think</span><br>
+        形容詞（ようすを表す語）<span class="en strong-word">new, small, good</span><br>
+        副詞（どのように・いつ）<span class="en strong-word">fast, never, today</span><br>
+        疑問詞 <span class="en strong-word">what, where, how</span><br>
+        否定 <span class="en strong-word">not, don't, can't</span>
+      </td>
+      <td>
+        冠詞 <span class="en weak-word">a, an, the</span><br>
+        前置詞（場所・方向など）<span class="en weak-word">to, for, of, at, in</span><br>
+        代名詞（名前の代わり）<span class="en weak-word">I, you, it, them</span><br>
+        助動詞 <span class="en weak-word">can, will, have, would</span><br>
+        be動詞 <span class="en weak-word">is, are, was</span><br>
+        接続詞（つなぎの語）<span class="en weak-word">and, but, if</span>
+      </td>
+    </tr>
+  </table>
+  </div>
+  <p class="note">※ 弱く読む語でも、文の最後に来たときや、とくに強調したいとき（「<span class="en">I</span> はやったけど、あなたは？」のような比べる場面）には強く読みます。</p>
+
+  <h3>長い単語は、その中の1か所だけが強い</h3>
+  <p>英語の単語は「音節（おんせつ）」という音のかたまりでできています。音節とは、母音（ア・イ・ウ・エ・オのような音）を中心にしたひとかたまりのことです。たとえば <span class="en">dinner</span> は <span class="en">din・ner</span> の2音節、<span class="en">banana</span> は <span class="en">ba・na・na</span> の3音節です。</p>
+  <p>2音節以上の単語では、<b>強く読むのはそのうち1つだけ</b>です。<span class="en"><b class="strong-word">DIN</b><span class="weak-word">ner</span></span>、<span class="en"><span class="weak-word">to</span><b class="strong-word">NIGHT</b></span>、<span class="en"><span class="weak-word">ba</span><b class="strong-word">NA</b><span class="weak-word">na</span></span> のように、残りの音節は弱い音としてすき間に入ります。手拍子を打つのは強い音節の上です。</p>
+
+  <h3>弱い音は、形まで変わる</h3>
+  <p>すき間に押しこむために、弱い音は短くなるだけでなく、<b>音そのものが変わります</b>。いちばん多いのは、母音が口の力を抜いた「ア」と「ウ」の中間のあいまいな音になることです。この音は記号で <span class="en">ə</span>（シュワ）と書きます。</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <tr><th>語</th><th>ていねいに言うと</th><th>弱く言うと</th></tr>
+    <tr><td class="en">the</td><td>ズィー</td><td><span class="en">/ðə/</span> 短い「ダ」に近い</td></tr>
+    <tr><td class="en">a</td><td>エイ</td><td><span class="en">/ə/</span> 軽い「ア」</td></tr>
+    <tr><td class="en">to</td><td>トゥー</td><td><span class="en">/tə/</span> 「タ」に近い</td></tr>
+    <tr><td class="en">for</td><td>フォー</td><td><span class="en">/fər/</span> 「ファ」</td></tr>
+    <tr><td class="en">of</td><td>オブ</td><td><span class="en">/əv/</span> 「ァヴ」、子音の前では「ア」だけ</td></tr>
+    <tr><td class="en">and</td><td>アンド</td><td><span class="en">/ən/</span> 「ン」だけになることも</td></tr>
+    <tr><td class="en">can</td><td>キャン</td><td><span class="en">/kən/</span> 「クン」</td></tr>
+    <tr><td class="en">have</td><td>ハヴ</td><td><span class="en">/əv/</span> 「ァヴ」（<span class="en">h</span> が消える）</td></tr>
+    <tr><td class="en">you</td><td>ユー</td><td><span class="en">/jə/</span> 「ヤ」</td></tr>
+    <tr><td class="en">going to</td><td>ゴーイング・トゥー</td><td><span class="en">gonna</span> 「ガナ」</td></tr>
+    <tr><td class="en">want to</td><td>ウォント・トゥー</td><td><span class="en">wanna</span> 「ワナ」</td></tr>
+  </table>
+  </div>
+  <p>たとえば <span class="en">is going to</span>（is・go・ing・to の4音節）は、すき間に入りきらないとき「ズナ」くらいの1かたまりまで縮みます。聞き取れなかったのは、この縮んだ音を「ゴーイング・トゥー」と探していたからです。</p>
+
+  <h3>やってみよう：強い語はどれ？</h3>
+  <p>強く読むと思う語をタップして選び、「答え合わせ」を押してください。</p>
+  <div id="quiz"></div>
+</section>
+
+<!-- ③ ワーク -->
+<section class="card" id="work">
+  <h2><span class="badge">3</span>ワーク：手拍子に合わせて唱える</h2>
+  <p>いよいよ練習です。「▶ リズムで練習」を押すと、カウント（コッ・コッ・コッ）のあとに手拍子が鳴ります。<b>手拍子と同時に赤い強い音を言い、灰色の弱い音はすき間に軽く押しこんでください</b>。1回言うごとに、息つぎ用の「すき間」の拍が1つ入ります。</p>
+  <div class="key">
+    <b>練習のコツ</b>
+    <ol style="margin:4px 0 0; padding-left:1.3em">
+      <li>最初は「🔊 お手本」で発音を確かめる。</li>
+      <li>遅めのテンポで、強い音を手拍子にぴったり合わせることだけに集中する。</li>
+      <li>弱い音ははっきり言わなくていい。間に合わなければ、つぶして短くする。</li>
+      <li>続けて言えたら、テンポを上げるか「だんだん速く」で限界に挑戦。</li>
+      <li>「録音する」で自分の声を聞き直すと、ずれがよくわかる。</li>
+    </ol>
+  </div>
+  <p class="note">※ iPhone はマナーモード（消音）だと音が出ません。</p>
+
+  <div class="tabs" id="levelTabs" role="tablist"></div>
+  <p class="level-desc" id="levelDesc"></p>
+  <div class="sent-list" id="sentList"></div>
+
+  <div class="player" id="player">
+    <div class="lane-wrap"><div id="laneWork"></div></div>
+    <div class="ja" id="workJa"></div>
+    <ul class="notes" id="workNotes"></ul>
+    <div class="btn-row">
+      <button class="btn-primary" id="workPlay">▶ リズムで練習</button>
+      <button class="btn" id="workSpeak">🔊 お手本</button>
+      <span class="status big" id="workStatus"></span>
+    </div>
+    <div class="best" id="workBest"></div>
+    <div class="controls">
+      <label class="ctl">テンポ <input type="range" id="bpm" min="50" max="150" step="2" value="72"> <span class="val" id="bpmVal">72</span></label>
+      <label class="ctl">くり返し
+        <select id="cycles"><option>2</option><option selected>4</option><option>6</option><option>8</option></select> 回</label>
+      <label class="ctl"><input type="checkbox" id="ramp"> だんだん速く（1回ごとに +6）</label>
+      <label class="ctl"><input type="checkbox" id="recOn"> 録音する（声は端末の中だけで使います）</label>
+      <label class="ctl">お手本の声 <select id="voice"></select></label>
+      <label class="ctl">お手本の速さ
+        <select id="rate"><option value="0.7">ゆっくり</option><option value="0.85" selected>少しゆっくり</option><option value="1">ふつう</option><option value="1.15">速め</option></select></label>
+    </div>
+    <div class="warn" id="voiceWarn"></div>
+    <div class="rec-box" id="recBox"></div>
+  </div>
+</section>
+
+<!-- ④ 聞き取り -->
+<section class="card" id="listen">
+  <h2><span class="badge">4</span>聞き取りに使う</h2>
+  <p>唱える練習でリズムが体に入ったら、聞くときにも使えます。全部の単語を拾おうとせず、<b>強い音（手拍子の位置）の単語だけ</b>を拾ってみましょう。強い語だけで、文の意味はほとんどわかります。</p>
+  <p>「▶ 聞く」を押すと、ランダムな文が読み上げられます。□ の数が強い音の数です。聞こえた強い語を思い浮かべてから、答えを開いてください。</p>
+  <div class="guess" id="guess"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="lsPlay">▶ 聞く</button>
+    <button class="btn" id="lsReveal1">強い語を見る</button>
+    <button class="btn" id="lsReveal2">文全体を見る</button>
+    <button class="btn" id="lsNext">次の文 →</button>
+  </div>
+  <div id="lsFull" hidden>
+    <div class="lane-wrap"><div id="laneListen"></div></div>
+    <div class="ja" id="lsJa"></div>
+  </div>
+</section>
+
+</main>
+<footer>英語リズム・トレーニング ― habatakijuku.com</footer>
+
+<script>
+'use strict';
+
+// ===== 例文データ =====
+// 書き方: *強い音節* 。単語の一部だけ強いときは to*night* のように書く。
+// 弱い語が2音節以上のときは · で区切る（音節の数＝すき間に入る音の数）。
+const LEVELS = [
+  {
+    id: 'L1', name: 'Level 1', desc: '手拍子3回の基本形。まずは弱い音がない文から始めて、the が1つずつ入った文へ進みます。the は手拍子の直前に、すべりこませるように言います。',
+    items: [
+      { id: 'l1-1', t: '*Cats* *chase* *mice*.', ja: 'ネコはネズミを追いかける。', notes: ['弱い音はゼロ。手拍子3回にぴったり言うだけです。'] },
+      { id: 'l1-2', t: 'The *cats* *chase* the *mice*.', ja: 'そのネコたちは、そのネズミたちを追いかける。', notes: ['the は /ðə/ と短く軽く。手拍子の数は上の文と同じ3回です。'] },
+      { id: 'l1-3', t: '*Dogs* *eat* *bones*.', ja: 'イヌは骨を食べる。', notes: ['これも弱い音ゼロ。強い音どうしの間隔をそろえます。'] },
+      { id: 'l1-4', t: 'The *dogs* *eat* the *bones*.', ja: 'そのイヌたちは、その骨を食べる。', notes: ['eat the は「イーダ」のように1つにつなげます。'] },
+    ],
+  },
+  {
+    id: 'L2', name: 'Level 2', desc: 'すき間に入る弱い音が2つになります。手拍子のテンポは変えずに、弱い音のほうを縮めて間に合わせます。',
+    items: [
+      { id: 'l2-1', t: 'The *cats* will *chase* the *mice*.', ja: 'そのネコたちは、そのネズミたちを追いかけるだろう。', notes: ['will は /əl/「ウ(ル)」くらいに軽く。cats will で「キャッツウ(ル)」と1かたまり。'] },
+      { id: 'l2-2', t: 'The *dogs* will *eat* the *bones*.', ja: 'そのイヌたちは、その骨を食べるだろう。', notes: ['dogs will は「ドッグズウ(ル)」。'] },
+      { id: 'l2-3', t: 'I *want* to *go* *home*.', ja: '家に帰りたい。', notes: ['want to は wanna「ワナ」に近づきます。', 'I は手拍子の前のすき間に入ります。'] },
+      { id: 'l2-4', t: 'She *went* to the *park* with *Tom*.', ja: '彼女はトムと公園へ行った。', notes: ['to the は「タダ」のように2つまとめて短く。', 'park with は「パークウィ(ズ)」とつなげます。'] },
+    ],
+  },
+  {
+    id: 'L3', name: 'Level 3', desc: '弱い音が3つ以上になり、音のつながりや形の変化（gonna など）も入ってきます。全部をはっきり言おうとすると間に合いません。つぶしてかまいません。',
+    items: [
+      { id: 'l3-1', t: 'The *cats* have been *chas*ing the *mice*.', ja: 'そのネコたちは、ずっとそのネズミたちを追いかけている。', notes: ['have been は /əv bɪn/「ァヴビン」。h は消えます。', 'chasing は CHA が強く、sing は弱い音としてすき間へ。'] },
+      { id: 'l3-2', t: 'The *dogs* have been *eat*ing the *bones*.', ja: 'そのイヌたちは、ずっとその骨を食べている。', notes: ['eating the は「イーティンダ」。'] },
+      { id: 'l3-3', t: "I'm *go*ing to *call* you to*night*.", ja: '今夜あなたに電話するね。', notes: ['going to は gonna「ガナ」。', 'tonight の to は弱く、NIGHT に手拍子。'] },
+      { id: 'l3-4', t: '*What* do you *want* for *din*ner?', ja: '夕食に何が食べたい？', notes: ['do you は「ドゥヤ」→「ジャ」くらいまで縮みます。', 'want for は「ワン(ト)ファ」。'] },
+    ],
+  },
+  {
+    id: 'BOSS', name: 'ラスボス', desc: '手拍子4回の長い文。すき間に入る弱い音がいちばん多い文ばかりです。テンポ60くらいから始めて、言えたら少しずつ上げましょう。',
+    items: [
+      { id: 'b-1', t: 'The *cats* would have been *chas*ing the *mice* in the *night*.', ja: 'そのネコたちは、夜にネズミたちを追いかけていたことだろう。', notes: ['would have been は「ウダビン」。3音節を1拍のすき間に押しこみます。', 'in the は「イナ」。'] },
+      { id: 'b-2', t: 'I was *go*ing to *ask* you if you *want*ed to *come*.', ja: '来たいかどうか、聞こうと思っていたんだ。', notes: ['I was は「アイワズ」→「アワズ」くらい。', 'ask you if you は「アスキュイフュ」と流れます。'] },
+      { id: 'b-3', t: '*Where* did you *put* the *keys* I *gave* you?', ja: 'わたしが渡したカギ、どこに置いたの？', notes: ['did you は「ディジュ」。', 'gave you は「ゲイヴュ」。'] },
+      { id: 'b-4', t: '*What* are you *go*ing to *do* this *week*end?', ja: '今週末は何をするの？', notes: ['What are you は「ワダヤ」。', 'going to は gonna。'] },
+    ],
+  },
+  {
+    id: 'FREE', name: '自由練習', desc: '日常会話でよく使う文です。手拍子の数（拍）がそれぞれちがいます。好きな文を選んで、くり返し唱えてください。',
+    items: [
+      { id: 'f-1', t: '*Nice* to *meet* you.', ja: 'はじめまして。', notes: ['meet you は「ミーチュ」。'] },
+      { id: 'f-2', t: '*How* are you *do*ing?', ja: '調子はどう？', notes: ['are you は「アヤ」くらい。'] },
+      { id: 'f-3', t: 'I *don\'t* *know*.', ja: 'わからない。', notes: ["否定の don't は強く読みます。"] },
+      { id: 'f-4', t: '*How* can I *help* you?', ja: 'ご用件は何でしょう？', notes: ['can I は「クナイ」。can は弱く /kən/。'] },
+      { id: 'f-5', t: "I'm *sor*ry I'm *late*.", ja: '遅れてごめんなさい。', notes: ["sorry I'm は「ソーリアイム」とつなげます。"] },
+      { id: 'f-6', t: "I'll *see* you to*mor*·row.", ja: 'また明日。', notes: ['tomorrow は MOR が強く、to と row は弱い。'] },
+      { id: 'f-7', t: '*Could* you *say* that a*gain*?', ja: 'もう一度言ってもらえますか？', notes: ['Could you は「クジュ」。ていねいにお願いするときは Could を少し強めに。'] },
+      { id: 'f-8', t: "It was *nice* *talk*ing to you.", ja: 'お話しできてよかったです。', notes: ['talking to you は「トーキンタユ」。'] },
+      { id: 'f-9', t: 'I should have *called* you *soon*er.', ja: 'もっと早く電話すればよかった。', notes: ['should have は「シュダ」（should\'ve）。'] },
+      { id: 'f-10', t: "I'd *like* a *cup* of *cof*fee.", ja: 'コーヒーを1杯ください。', notes: ['cup of は「カパ」。of の v はほとんど聞こえません。'] },
+      { id: 'f-11', t: '*What* do you *do* for a *liv*ing?', ja: 'お仕事は何をしているんですか？', notes: ['for a は「ファラ」。'] },
+      { id: 'f-12', t: '*Thanks* for *com*ing to*day*.', ja: '今日は来てくれてありがとう。', notes: ['for は「ファ」。'] },
+      { id: 'f-13', t: 'Do you *want* to *grab* some *lunch*?', ja: 'お昼を食べに行かない？', notes: ['Do you want to は「ジュワナ」まで縮みます。'] },
+      { id: 'f-14', t: "I've *nev*er *been* to *Ja*pan.", ja: '日本に行ったことがありません。', notes: ['Japan は PAN が強いのがふつうですが、ここでは文のリズムで JA に寄ることもあります。まずは書いてあるとおりに。'] },
+      { id: 'f-15', t: "I *think* it's *go*ing to *rain*.", ja: '雨が降りそうだね。', notes: ["it's going to は「イッツガナ」→「ツナ」くらいまで縮みます。"] },
+      { id: 'f-16', t: "It's *not* as *eas*y as it *looks*.", ja: '見た目ほど簡単じゃない。', notes: ['as it は「アズィッ」。'] },
+      { id: 'f-17', t: 'Let me *know* if you *need* *an*y·thing.', ja: '何か必要なら言ってね。', notes: ['Let me は「レミ」。', 'anything は AN が強く、y・thing は弱い。'] },
+      { id: 'f-18', t: "She's been *work*ing here for *five* *years*.", ja: '彼女はここで5年働いている。', notes: ["She's been は「シーズビン」を手拍子の前のすき間へ。"] },
+      { id: 'f-19', t: "We're *go*ing to be *late* for the *meet*ing.", ja: '会議に遅れちゃう。', notes: ['going to be は「ガナビ」。'] },
+      { id: 'f-20', t: 'Did you have a *good* *week*end?', ja: '週末は楽しかった？', notes: ['Did you have a は「ディジュハヴァ」→「ジュヴァ」くらい。全部すき間に入ります。'] },
+      { id: 'f-21', t: '*Where* is the *sta*tion?', ja: '駅はどこですか？', notes: ["Where is the は「ウェアズダ」。is は Where's のように縮みます。"] },
+      { id: 'f-22', t: '*What* are you *go*ing to *have*?', ja: '何を注文する？', notes: ['What are you going to は「ワダヤガナ」。'] },
+    ],
+  },
+];
+
+const DEMO_JA = '*ね* *こ* *が* *ね* *ず* *み* *を* *お* *う*';
+const DEMO_EN = 'The *cats* *chase* the *mice*.';
+const LADDER = [
+  '*Cats* *chase* *mice*.',
+  'The *cats* *chase* the *mice*.',
+  'The *cats* will *chase* the *mice*.',
+  'The *cats* have been *chas*ing the *mice*.',
+];
+const QUIZ = [
+  { t: 'The *boy* is *read*ing a *book*.', ja: 'その少年は本を読んでいる。' },
+  { t: 'I *want* to *buy* a *new* *bag*.', ja: '新しいかばんを買いたい。' },
+  { t: 'She *lives* in a *small* *town* by the *sea*.', ja: '彼女は海のそばの小さな町に住んでいる。' },
+  { t: '*Where* did you *go* *yes*terday?', ja: 'きのうはどこへ行ったの？' },
+];
+
+// ===== 文の解析 =====
+// 音節の列と、拍（強い音節＋その後ろの弱い音節）の列に分ける
+function parseSentence(src) {
+  const sylls = [];
+  const words = [];
+  src.trim().split(/\s+/).forEach((raw, wi) => {
+    const m = raw.match(/^(.*?)([.,!?;:]*)$/);
+    const body = m[1];
+    const punct = m[2];
+    const sm = body.match(/^([^*]*)\*([^*]+)\*(.*)$/);
+    const parts = sm ? [[sm[1], false], [sm[2], true], [sm[3], false]] : [[body, false]];
+    const idx = [];
+    parts.forEach(([txt, stress]) => {
+      if (!txt) return;
+      (stress ? [txt] : txt.split('·')).forEach((p) => {
+        idx.push(sylls.length);
+        sylls.push({ text: p, stress, word: wi, punct: '' });
+      });
+    });
+    sylls[sylls.length - 1].punct = punct;
+    words.push({ text: body.replace(/[*·]/g, '') + punct, sylls: idx });
+  });
+  const pickup = [];
+  const beats = [];
+  sylls.forEach((s, i) => {
+    if (s.stress) beats.push({ stress: i, weak: [] });
+    else if (beats.length) beats[beats.length - 1].weak.push(i);
+    else pickup.push(i);
+  });
+  if (!beats.length) throw new Error(`強い音節がない文です: ${src}`);
+  let pos = 0;
+  const wordStart = words.map((w) => { const p = pos; pos += w.text.length + 1; return p; });
+  return { src, sylls, words, pickup, beats, spoken: words.map((w) => w.text).join(' '), wordStart };
+}
+
+// ===== 拍の図 =====
+function renderLane(parsed, opts = {}) {
+  const lane = document.createElement('div');
+  lane.className = 'lane en' + (opts.mora ? ' mora' : '');
+  const cols = [parsed.pickup, ...parsed.beats.map((b) => [b.stress, ...b.weak])];
+  const sylEls = [];
+  cols.forEach((list, ci) => {
+    const col = document.createElement('div');
+    col.className = 'col' + (ci === 0 ? ' rest' : '');
+    const weakCount = list.filter((si) => !parsed.sylls[si].stress).length;
+    if (weakCount >= 2) col.classList.add('k' + Math.min(weakCount, 4));
+    const num = document.createElement('span');
+    num.className = 'num';
+    num.textContent = ci === 0 ? 'すき間' : String(ci);
+    if (opts.mora && ci === 0) num.textContent = '';
+    col.appendChild(num);
+    let chunk = null;
+    let chunkWord = -1;
+    list.forEach((si, k) => {
+      const s = parsed.sylls[si];
+      if (s.word !== chunkWord) {
+        chunk = document.createElement('span');
+        chunk.className = 'ch';
+        col.appendChild(chunk);
+        chunkWord = s.word;
+      }
+      const el = document.createElement('span');
+      el.className = s.stress ? 's' : 'w';
+      el.textContent = s.text + s.punct;
+      chunk.appendChild(el);
+      sylEls[si] = el;
+      const w = parsed.words[s.word];
+      const nextInCol = list[k + 1];
+      const isLastOfWord = w.sylls[w.sylls.length - 1] === si;
+      if (!isLastOfWord && (nextInCol === undefined || parsed.sylls[nextInCol].word !== s.word)) {
+        const hy = document.createElement('span');
+        hy.className = 'hy';
+        hy.textContent = '-';
+        chunk.appendChild(hy);
+      }
+    });
+    lane.appendChild(col);
+  });
+  const ph = document.createElement('div');
+  ph.className = 'ph';
+  lane.appendChild(ph);
+  return { el: lane, parsed, sylEls, cols: [...lane.querySelectorAll('.col')], ph };
+}
+
+function mountLane(host, parsed, opts) {
+  const lane = renderLane(parsed, opts);
+  host.replaceChildren(lane.el);
+  return lane;
+}
+
+// ===== 音 =====
+const Engine = (() => {
+  let ctx = null;
+  let noise = null;
+  let run = null;
+
+  function ensure() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) throw new Error('このブラウザは Web Audio に対応していません');
+      ctx = new AC();
+      const len = Math.floor(ctx.sampleRate * 0.2);
+      noise = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = noise.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  function clap(out, t, vol) {
+    const src = ctx.createBufferSource();
+    src.buffer = noise;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 1400;
+    bp.Q.value = 0.9;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.003);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+    src.connect(bp).connect(g).connect(out);
+    src.start(t);
+    src.stop(t + 0.16);
+  }
+
+  function tick(out, t, freq, vol) {
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+    o.connect(g).connect(out);
+    o.start(t);
+    o.stop(t + 0.08);
+  }
+
+  function stop() {
+    if (!run) return;
+    const r = run;
+    run = null;
+    cancelAnimationFrame(r.raf);
+    r.out.disconnect();
+    r.handlers.onStop?.(false, null);
+  }
+
+  function play(timeline, handlers) {
+    stop();
+    ensure();
+    const out = ctx.createGain();
+    out.connect(ctx.destination);
+    const t0 = ctx.currentTime + 0.2;
+    timeline.events.forEach((e) => {
+      if (e.sound === 'clap') clap(out, t0 + e.t, e.vol);
+      else if (e.sound === 'tick') tick(out, t0 + e.t, e.freq, e.vol);
+    });
+    const r = { out, raf: 0, i: 0, handlers };
+    run = r;
+    const lat = ctx.outputLatency || ctx.baseLatency || 0;
+    const loop = () => {
+      if (run !== r) return;
+      const now = ctx.currentTime - t0 - lat;
+      const ev = timeline.events;
+      while (r.i < ev.length && ev[r.i].t <= now) {
+        handlers.onEvent(ev[r.i]);
+        r.i++;
+      }
+      handlers.onFrame?.(now);
+      if (r.i >= ev.length) {
+        run = null;
+        setTimeout(() => out.disconnect(), 300);
+        handlers.onStop?.(true, ev[ev.length - 1]);
+        return;
+      }
+      r.raf = requestAnimationFrame(loop);
+    };
+    r.raf = requestAnimationFrame(loop);
+  }
+
+  return { play, stop, ensure, running: () => run !== null };
+})();
+
+// 拍の並び（時刻つきの出来事の列）を作る
+// 1回分 = すき間の拍1つ + 強い音の拍。弱い音節は拍の中に等間隔に置く
+function buildTimeline(parsedList, { bpm, cycles, ramp = 0, countIn = 3 }) {
+  const events = [];
+  let t = 0;
+  let b = bpm;
+  for (let i = 0; i < countIn; i++) {
+    events.push({ t, kind: 'count', n: i + 1, sound: 'tick', freq: 1250, vol: 0.45 });
+    t += 60 / b;
+  }
+  for (let c = 0; c < cycles; c++) {
+    const item = c % parsedList.length;
+    const S = parsedList[item];
+    const d = 60 / b;
+    const cs = t;
+    const nCols = S.beats.length + 1;
+    events.push({ t: cs, kind: 'cycle', item, cycle: c, bpm: b, d, nCols, sound: 'tick', freq: 820, vol: 0.22 });
+    S.pickup.forEach((si, j) => events.push({ t: cs + d * (j + 1) / (S.pickup.length + 1), kind: 'syl', si, item }));
+    S.beats.forEach((bt, k) => {
+      const bs = cs + d * (k + 1);
+      events.push({ t: bs, kind: 'beat', k, item, sound: 'clap', vol: k === 0 ? 1 : 0.8 });
+      events.push({ t: bs, kind: 'syl', si: bt.stress, item });
+      bt.weak.forEach((si, j) => events.push({ t: bs + d * (j + 1) / (bt.weak.length + 1), kind: 'syl', si, item }));
+    });
+    t = cs + d * nCols;
+    if (c < cycles - 1) b += ramp;
+  }
+  events.push({ t, kind: 'end', bpm: b });
+  events.sort((a, b2) => a.t - b2.t);
+  return { events };
+}
+
+// 拍の図を、音に合わせて光らせる
+function laneAnimator(lanes, statusEl, fmt = {}) {
+  let cur = null;
+  let lastSyl = null;
+  const clear = () => {
+    lanes.forEach((ln) => {
+      ln.el.classList.remove('active');
+      ln.sylEls.forEach((e) => e && e.classList.remove('on'));
+    });
+    lastSyl = null;
+  };
+  return {
+    onEvent(e) {
+      if (e.kind === 'count') {
+        statusEl.textContent = fmt.count ? fmt.count(e) : String(e.n);
+      } else if (e.kind === 'cycle') {
+        clear();
+        cur = { lane: lanes[e.item], cs: e.t, len: e.d * e.nCols };
+        cur.lane.el.classList.add('active');
+        statusEl.textContent = fmt.cycle ? fmt.cycle(e) : '';
+      } else if (e.kind === 'syl') {
+        if (lastSyl) lastSyl.classList.remove('on');
+        lastSyl = lanes[e.item].sylEls[e.si];
+        lastSyl.classList.add('on');
+      } else if (e.kind === 'beat') {
+        const col = lanes[e.item].cols[e.k + 1];
+        col.classList.remove('pulse');
+        void col.offsetWidth;
+        col.classList.add('pulse');
+      }
+    },
+    onFrame(now) {
+      if (!cur) return;
+      const f = Math.min(1, Math.max(0, (now - cur.cs) / cur.len));
+      cur.lane.ph.style.left = `calc(${(f * 100).toFixed(2)}% - 1px)`;
+    },
+    reset() { clear(); cur = null; },
+  };
+}
+
+// ===== 読み上げ =====
+const Voice = (() => {
+  let voices = [];
+  const score = (v) => {
+    let s = 0;
+    if (/natural|online|neural/i.test(v.name)) s += 50;
+    if (/google/i.test(v.name)) s += 30;
+    if (/samantha|aria|jenny|guy|ava|zira/i.test(v.name)) s += 15;
+    if (/^en[-_]US/i.test(v.lang)) s += 10;
+    return s;
+  };
+  function load(select, warnEl, saved) {
+    if (!('speechSynthesis' in window)) {
+      warnEl.textContent = 'このブラウザは読み上げに対応していません。お手本は使えませんが、手拍子の練習はできます。';
+      return;
+    }
+    voices = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang)).sort((a, b) => score(b) - score(a));
+    select.replaceChildren(...voices.map((v) => {
+      const o = document.createElement('option');
+      o.value = v.name;
+      o.textContent = `${v.name} (${v.lang})`;
+      return o;
+    }));
+    if (saved && voices.some((v) => v.name === saved)) select.value = saved;
+    warnEl.textContent = voices.length ? '' : '英語の読み上げ音声が見つかりません。Chrome か Edge だと英語の声が使えることが多いです。';
+  }
+  function speak(parsed, { voiceName, rate, lane, onEnd }) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(parsed.spoken);
+    const v = voices.find((x) => x.name === voiceName);
+    if (v) u.voice = v;
+    u.lang = v ? v.lang : 'en-US';
+    u.rate = rate;
+    let lit = [];
+    const unlight = () => { lit.forEach((e) => e.classList.remove('on')); lit = []; };
+    if (lane) {
+      u.onboundary = (e) => {
+        if (e.name && e.name !== 'word') return;
+        let wi = 0;
+        parsed.wordStart.forEach((p, i) => { if (p <= e.charIndex) wi = i; });
+        unlight();
+        lit = parsed.words[wi].sylls.map((si) => lane.sylEls[si]);
+        lit.forEach((el) => el.classList.add('on'));
+      };
+    }
+    u.onend = () => { unlight(); onEnd?.(); };
+    u.onerror = (e) => { unlight(); if (e.error !== 'canceled' && e.error !== 'interrupted') console.error('読み上げエラー:', e.error); onEnd?.(); };
+    speechSynthesis.speak(u);
+  }
+  return { load, speak };
+})();
+
+// ===== 保存 =====
+const STORE_KEY = 'rhythmEnglish_v1';
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    const v = raw ? JSON.parse(raw) : {};
+    return { best: v.best || {}, settings: v.settings || {} };
+  } catch (e) {
+    console.warn('保存データを読めませんでした:', e);
+    return { best: {}, settings: {} };
+  }
+}
+let store = loadStore();
+function saveStore() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { console.warn('保存できませんでした:', e); }
+}
+
+// ===== ① しくみ =====
+function setupDemo(hostId, srcs, btnId, statusId, opts) {
+  const host = document.getElementById(hostId);
+  const lanes = srcs.map((src, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'lane-wrap';
+    if (opts.labels) {
+      const lb = document.createElement('div');
+      lb.className = 'lane-label';
+      lb.textContent = opts.labels[i];
+      wrap.appendChild(lb);
+    }
+    const lane = renderLane(parseSentence(src), opts);
+    wrap.appendChild(lane.el);
+    host.appendChild(wrap);
+    return lane;
+  });
+  const btn = document.getElementById(btnId);
+  const status = document.getElementById(statusId);
+  const anim = laneAnimator(lanes, status, opts.fmt);
+  btn.addEventListener('click', () => {
+    if (btn.dataset.playing) { Engine.stop(); return; }
+    stopAll();
+    const label = btn.textContent;
+    btn.dataset.playing = '1';
+    btn.textContent = '■ 止める';
+    const tl = buildTimeline(lanes.map((l) => l.parsed), { bpm: opts.bpm, cycles: opts.cycles ?? lanes.length });
+    Engine.play(tl, {
+      onEvent: anim.onEvent,
+      onFrame: anim.onFrame,
+      onStop: () => {
+        anim.reset();
+        status.textContent = '';
+        delete btn.dataset.playing;
+        btn.textContent = label;
+      },
+    });
+  });
+}
+
+// ===== ② クイズ =====
+function setupQuiz() {
+  const host = document.getElementById('quiz');
+  QUIZ.forEach((q, qi) => {
+    const parsed = parseSentence(q.t);
+    const box = document.createElement('div');
+    box.className = 'quiz-q';
+    const words = document.createElement('div');
+    words.className = 'quiz-words';
+    const btns = parsed.words.map((w) => {
+      const b = document.createElement('button');
+      b.className = 'qw';
+      b.textContent = w.text;
+      b.addEventListener('click', () => { b.classList.toggle('sel'); });
+      words.appendChild(b);
+      return b;
+    });
+    const ja = document.createElement('div');
+    ja.className = 'note';
+    ja.textContent = `${qi + 1}. ${q.ja}`;
+    const row = document.createElement('div');
+    row.className = 'btn-row';
+    const check = document.createElement('button');
+    check.className = 'btn';
+    check.textContent = '答え合わせ';
+    const res = document.createElement('span');
+    res.className = 'quiz-result';
+    check.addEventListener('click', () => {
+      let ok = 0;
+      let bad = 0;
+      parsed.words.forEach((w, i) => {
+        const strong = w.sylls.some((si) => parsed.sylls[si].stress);
+        const sel = btns[i].classList.contains('sel');
+        btns[i].classList.remove('right', 'wrong', 'miss');
+        if (sel && strong) { btns[i].classList.add('right'); ok++; }
+        else if (sel && !strong) { btns[i].classList.add('wrong'); bad++; }
+        else if (strong) btns[i].classList.add('miss');
+      });
+      const total = parsed.beats.length;
+      res.style.color = ok === total && bad === 0 ? 'var(--ok)' : 'var(--ng)';
+      res.textContent = ok === total && bad === 0
+        ? '正解！ 強い語は ' + parsed.beats.map((b) => parsed.words[parsed.sylls[b.stress].word].text.replace(/[.,!?]/g, '')).join('・')
+        : `強い語は ${total} つ。緑の点線が見落とし、赤が弱い語です。`;
+    });
+    row.append(check, res);
+    box.append(ja, words, row);
+    host.appendChild(box);
+  });
+}
+
+// ===== ③ ワーク =====
+const work = {
+  level: LEVELS[0],
+  item: LEVELS[0].items[0],
+  lane: null,
+  rec: null,
+};
+const $ = (id) => document.getElementById(id);
+
+function bestText(id) {
+  const b = store.best[id];
+  return b ? `✓ 最後まで練習した最高テンポ：${b}` : 'まだ練習していません';
+}
+
+function levelPct(lv) {
+  return Math.round(100 * lv.items.filter((it) => store.best[it.id]).length / lv.items.length);
+}
+
+function renderTabs() {
+  const host = $('levelTabs');
+  host.replaceChildren(...LEVELS.map((lv) => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (lv === work.level ? ' on' : '');
+    b.setAttribute('role', 'tab');
+    b.textContent = lv.name;
+    const pct = document.createElement('span');
+    pct.className = 'pct';
+    pct.textContent = `${levelPct(lv)}%`;
+    b.appendChild(pct);
+    b.addEventListener('click', () => {
+      stopAll();
+      work.level = lv;
+      work.item = lv.items[0];
+      renderWork();
+    });
+    return b;
+  }));
+}
+
+function sentenceHTML(parsed) {
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  return parsed.words.map((w) => w.sylls.map((si) => {
+    const s = parsed.sylls[si];
+    const t = esc(s.text + s.punct);
+    return s.stress ? `<b>${t}</b>` : t;
+  }).join('')).join(' ');
+}
+
+function renderList() {
+  const host = $('sentList');
+  host.replaceChildren(...work.level.items.map((it) => {
+    const parsed = parseSentence(it.t);
+    const b = document.createElement('button');
+    b.className = 'sent' + (it === work.item ? ' on' : '');
+    b.innerHTML = `<span class="tick">${store.best[it.id] ? '✓' : ''}</span><span class="en">${sentenceHTML(parsed)}</span><span class="meta">${parsed.beats.length}拍</span>`;
+    b.addEventListener('click', () => {
+      stopAll();
+      work.item = it;
+      renderWork();
+    });
+    return b;
+  }));
+}
+
+function renderPlayer() {
+  const it = work.item;
+  work.lane = mountLane($('laneWork'), parseSentence(it.t));
+  $('workJa').textContent = it.ja;
+  $('workNotes').replaceChildren(...(it.notes || []).map((n) => {
+    const li = document.createElement('li');
+    li.textContent = n;
+    return li;
+  }));
+  $('workBest').textContent = bestText(it.id);
+  $('workStatus').textContent = '';
+  $('recBox').replaceChildren();
+}
+
+function renderWork() {
+  renderTabs();
+  $('levelDesc').textContent = work.level.desc;
+  renderList();
+  renderPlayer();
+}
+
+async function startRecording() {
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    throw new Error('このブラウザは録音に対応していません');
+  }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const rec = new MediaRecorder(stream);
+  const chunks = [];
+  rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  const done = new Promise((resolve) => {
+    rec.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      resolve(new Blob(chunks, { type: rec.mimeType || 'audio/webm' }));
+    };
+  });
+  rec.start();
+  return { stop: () => { if (rec.state !== 'inactive') rec.stop(); return done; } };
+}
+
+function showRecording(blob) {
+  const box = $('recBox');
+  const label = document.createElement('div');
+  label.className = 'note';
+  label.textContent = '🎙 録音した声（手拍子と合っているか聞いてみよう）';
+  const audio = document.createElement('audio');
+  audio.controls = true;
+  audio.src = URL.createObjectURL(blob);
+  box.replaceChildren(label, audio);
+}
+
+function setupWork() {
+  const s = store.settings;
+  if (s.bpm) $('bpm').value = s.bpm;
+  if (s.cycles) $('cycles').value = String(s.cycles);
+  if (s.rate) $('rate').value = String(s.rate);
+  $('ramp').checked = !!s.ramp;
+  $('bpmVal').textContent = $('bpm').value;
+  const saveSettings = () => {
+    store.settings = {
+      bpm: +$('bpm').value, cycles: +$('cycles').value, ramp: $('ramp').checked,
+      rate: +$('rate').value, voice: $('voice').value,
+    };
+    saveStore();
+  };
+  $('bpm').addEventListener('input', () => { $('bpmVal').textContent = $('bpm').value; saveSettings(); });
+  ['cycles', 'ramp', 'rate', 'voice'].forEach((id) => $(id).addEventListener('change', saveSettings));
+
+  const loadVoices = () => Voice.load($('voice'), $('voiceWarn'), store.settings.voice);
+  loadVoices();
+  if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', loadVoices);
+
+  const playBtn = $('workPlay');
+  const status = $('workStatus');
+  playBtn.addEventListener('click', async () => {
+    if (Engine.running() && playBtn.dataset.playing) { Engine.stop(); return; }
+    stopAll();
+    try { Engine.ensure(); } catch (e) { status.textContent = e.message; return; }
+    const it = work.item;
+    const parsed = work.lane.parsed;
+    const cycles = +$('cycles').value;
+    const ramp = $('ramp').checked ? 6 : 0;
+    const bpm = +$('bpm').value;
+    $('recBox').replaceChildren();
+    if ($('recOn').checked) {
+      try {
+        work.rec = await startRecording();
+      } catch (e) {
+        $('recBox').innerHTML = '';
+        const w = document.createElement('div');
+        w.className = 'warn';
+        w.textContent = `マイクが使えませんでした（${e.message}）。録音なしで続けます。`;
+        $('recBox').appendChild(w);
+        work.rec = null;
+      }
+    }
+    playBtn.dataset.playing = '1';
+    playBtn.textContent = '■ 止める';
+    const anim = laneAnimator([work.lane], status, {
+      count: (e) => ['いち', 'に', 'さん'][e.n - 1] || String(e.n),
+      cycle: (e) => `${e.cycle + 1} / ${cycles} 回目　テンポ ${e.bpm}`,
+    });
+    Engine.play(buildTimeline([parsed], { bpm, cycles, ramp }), {
+      onEvent: anim.onEvent,
+      onFrame: anim.onFrame,
+      onStop: async (completed) => {
+        anim.reset();
+        delete playBtn.dataset.playing;
+        playBtn.textContent = '▶ リズムで練習';
+        const finalBpm = bpm + ramp * (cycles - 1);
+        if (completed) {
+          status.textContent = ramp ? `おつかれさま！ 最後はテンポ ${finalBpm}` : 'おつかれさま！';
+          if (!store.best[it.id] || finalBpm > store.best[it.id]) {
+            store.best[it.id] = finalBpm;
+            saveStore();
+          }
+          $('workBest').textContent = bestText(it.id);
+          renderTabs();
+          renderList();
+        } else {
+          status.textContent = '';
+        }
+        if (work.rec) {
+          const r = work.rec;
+          work.rec = null;
+          showRecording(await r.stop());
+        }
+      },
+    });
+  });
+
+  const speakBtn = $('workSpeak');
+  speakBtn.addEventListener('click', () => {
+    stopAll();
+    Voice.speak(work.lane.parsed, { voiceName: $('voice').value, rate: +$('rate').value, lane: work.lane });
+  });
+
+  renderWork();
+}
+
+// ===== ④ 聞き取り =====
+const ALL_ITEMS = LEVELS.flatMap((lv) => lv.items);
+const listen = { item: null, parsed: null, lane: null };
+
+function nextListen() {
+  stopAll();
+  let it;
+  do { it = ALL_ITEMS[Math.floor(Math.random() * ALL_ITEMS.length)]; } while (ALL_ITEMS.length > 1 && it === listen.item);
+  listen.item = it;
+  listen.parsed = parseSentence(it.t);
+  $('guess').replaceChildren(...listen.parsed.beats.map(() => {
+    const sp = document.createElement('span');
+    sp.className = 'en';
+    sp.textContent = '□';
+    return sp;
+  }));
+  $('lsFull').hidden = true;
+  listen.lane = mountLane($('laneListen'), listen.parsed);
+  $('lsJa').textContent = it.ja;
+}
+
+function setupListen() {
+  $('lsPlay').addEventListener('click', () => {
+    stopAll();
+    Voice.speak(listen.parsed, {
+      voiceName: $('voice').value,
+      rate: Math.max(1, +$('rate').value),
+      lane: $('lsFull').hidden ? null : listen.lane,
+    });
+  });
+  $('lsReveal1').addEventListener('click', () => {
+    const P = listen.parsed;
+    [...$('guess').children].forEach((sp, i) => {
+      const w = P.words[P.sylls[P.beats[i].stress].word];
+      sp.textContent = w.text.replace(/[.,!?]/g, '');
+    });
+  });
+  $('lsReveal2').addEventListener('click', () => {
+    $('lsReveal1').click();
+    $('lsFull').hidden = false;
+  });
+  $('lsNext').addEventListener('click', nextListen);
+  nextListen();
+}
+
+function stopAll() {
+  Engine.stop();
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+// ===== 起動 =====
+setupDemo('laneJa', [DEMO_JA], 'playJa', 'statusJa', { mora: true, bpm: 280, cycles: 2, fmt: { count: () => '', cycle: () => '' } });
+setupDemo('laneEn', [DEMO_EN], 'playEn', 'statusEn', { bpm: 84, cycles: 2, fmt: { count: () => '', cycle: () => '' } });
+setupDemo('ladder', LADDER, 'playLadder', 'statusLadder', {
+  bpm: 76,
+  labels: ['弱い音 0', '弱い音 2（the ×2）', '弱い音 3（the, will, the）', '弱い音 5（the, have, been, chas-ing の ing, the）'],
+  fmt: { count: () => '', cycle: (e) => `${e.cycle + 1} つ目の文` },
+});
+setupQuiz();
+setupWork();
+setupListen();
+</script>
+</body>
+</html>

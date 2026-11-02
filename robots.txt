@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rhythm-english.habatakijuku.com/sitemap.xml
