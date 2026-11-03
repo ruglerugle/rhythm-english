@@ -251,7 +251,7 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
     <button class="btn-primary" id="playLadder">▶ 4つの文を続けて聞く</button>
     <span class="status" id="statusLadder"></span>
   </div>
-  <p class="note">※ 音は手拍子と目印だけです。実際の発音を聞くには、③ワークの「🔊 お手本」を使ってください。</p>
+  <p class="note">※ 英語の声は合成音声です。強い音の頭が手拍子に重なるように、区切って並べています。</p>
 
   <div class="key">
     <b>ここがポイント</b><br>
@@ -321,15 +321,15 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
 <!-- ③ ワーク -->
 <section class="card" id="work">
   <h2><span class="badge">3</span>ワーク：手拍子に合わせて唱える</h2>
-  <p>いよいよ練習です。「▶ リズムで練習」を押すと、カウント（コッ・コッ・コッ）のあとに手拍子が鳴ります。<b>手拍子と同時に赤い強い音を言い、灰色の弱い音はすき間に軽く押しこんでください</b>。1回言うごとに、息つぎ用の「すき間」の拍が1つ入ります。</p>
+  <p>いよいよ練習です。「▶ リズムで練習」を押すと、カウント（コッ・コッ・コッ）のあとに手拍子が鳴ります。<b>手拍子と同時に赤い強い音を言い、灰色の弱い音はすき間に軽く押しこんでください</b>。1回言うごとに、息つぎ用の「すき間」の拍が1つ入ります。最初はお手本の声が手拍子に合わせていっしょに流れるので、声に重ねて唱えましょう。慣れたら「鳴らす音」を「手拍子だけ」にして、自分だけで唱えます。</p>
   <div class="key">
     <b>練習のコツ</b>
     <ol style="margin:4px 0 0; padding-left:1.3em">
-      <li>最初は「🔊 お手本」で発音を確かめる。</li>
+      <li>最初は「🔊 お手本」で、ふつうに読んだときの発音を確かめる。</li>
       <li>遅めのテンポで、強い音を手拍子にぴったり合わせることだけに集中する。</li>
       <li>弱い音ははっきり言わなくていい。間に合わなければ、つぶして短くする。</li>
       <li>続けて言えたら、テンポを上げるか「だんだん速く」で限界に挑戦。</li>
-      <li>「録音する」で自分の声を聞き直すと、ずれがよくわかる。</li>
+      <li>「録音する」で自分の声を聞き直すと、ずれがよくわかる。録音するときは「手拍子だけ」にするか、イヤホンを使うと自分の声が聞きやすい。</li>
     </ol>
   </div>
   <p class="note">※ iPhone はマナーモード（消音）だと音が出ません。</p>
@@ -354,9 +354,12 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
         <select id="cycles"><option>2</option><option selected>4</option><option>6</option><option>8</option></select> 回</label>
       <label class="ctl"><input type="checkbox" id="ramp"> だんだん速く（1回ごとに +6）</label>
       <label class="ctl"><input type="checkbox" id="recOn"> 録音する（声は端末の中だけで使います）</label>
-      <label class="ctl">お手本の声 <select id="voice"></select></label>
-      <label class="ctl">お手本の速さ
-        <select id="rate"><option value="0.7">ゆっくり</option><option value="0.85" selected>少しゆっくり</option><option value="1">ふつう</option><option value="1.15">速め</option></select></label>
+      <label class="ctl">鳴らす音
+        <select id="mix"><option value="both" selected>手拍子＋声</option><option value="voice">声だけ</option><option value="clap">手拍子だけ</option></select></label>
+      <label class="ctl">お手本の声
+        <select id="voice"><option value="f" selected>女性</option><option value="m">男性</option></select></label>
+      <label class="ctl">「お手本」の速さ
+        <select id="rate"><option value="s" selected>ゆっくり</option><option value="n">ふつう</option><option value="q">速め</option></select></label>
     </div>
     <div class="warn" id="voiceWarn"></div>
     <div class="rec-box" id="recBox"></div>
@@ -375,6 +378,7 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
     <button class="btn" id="lsReveal2">文全体を見る</button>
     <button class="btn" id="lsNext">次の文 →</button>
   </div>
+  <div class="warn" id="lsWarn"></div>
   <div id="lsFull" hidden>
     <div class="lane-wrap"><div id="laneListen"></div></div>
     <div class="ja" id="lsJa"></div>
@@ -485,7 +489,7 @@ function parseSentence(src) {
     const idx = [];
     parts.forEach(([txt, stress]) => {
       if (!txt) return;
-      (stress ? [txt] : txt.split('·')).forEach((p) => {
+      (stress ? [txt] : txt.split('·').filter(Boolean)).forEach((p) => {
         idx.push(sylls.length);
         sylls.push({ text: p, stress, word: wi, punct: '' });
       });
@@ -610,6 +614,31 @@ const Engine = (() => {
     o.stop(t + 0.08);
   }
 
+  // お手本の声の一部（offset から dur 秒ぶん）を、時刻 t に速さ rate で鳴らす
+  function voice(out, t, e) {
+    const PRE = 0.012; // 子音の出だしを削らないように少し前から鳴らす
+    const off = Math.max(0, e.offset - PRE);
+    const srcDur = e.dur + (e.offset - off);
+    const st = t - (e.offset - off) / e.rate;
+    const len = srcDur / e.rate;
+    const src = ctx.createBufferSource();
+    src.buffer = e.buffer;
+    src.playbackRate.value = e.rate;
+    const g = ctx.createGain();
+    const fade = Math.min(0.012, len / 3);
+    g.gain.setValueAtTime(0, st);
+    g.gain.linearRampToValueAtTime(e.vol, st + fade / 2);
+    g.gain.setValueAtTime(e.vol, st + len - fade);
+    g.gain.linearRampToValueAtTime(0, st + len);
+    src.connect(g).connect(out);
+    src.start(st, off, srcDur);
+  }
+
+  function decode(ab) {
+    ensure();
+    return new Promise((resolve, reject) => ctx.decodeAudioData(ab, resolve, (err) => reject(err || new Error('音声を読みこめませんでした'))));
+  }
+
   function stop() {
     if (!run) return;
     const r = run;
@@ -628,6 +657,7 @@ const Engine = (() => {
     timeline.events.forEach((e) => {
       if (e.sound === 'clap') clap(out, t0 + e.t, e.vol);
       else if (e.sound === 'tick') tick(out, t0 + e.t, e.freq, e.vol);
+      else if (e.sound === 'voice') voice(out, t0 + e.t, e);
     });
     const r = { out, raf: 0, i: 0, handlers };
     run = r;
@@ -652,12 +682,83 @@ const Engine = (() => {
     r.raf = requestAnimationFrame(loop);
   }
 
-  return { play, stop, ensure, running: () => run !== null };
+  return { play, stop, ensure, decode, running: () => run !== null };
 })();
 
+// ===== お手本の声を拍に並べる =====
+// 音声は文ごとに3つの速さ（s ゆっくり・n ふつう・q 速め）で作ってある。音節ごとに [始まり, 終わり, 母音の始まり]（秒）
+const VOICE_RATES = ['s', 'n', 'q'];
+const P_CENTER = 0.5;    // 強い音節の「子音の始まり〜母音の始まり」のどこを手拍子に合わせるか
+const MAX_SPEEDUP = 1.4; // いちばん速い音声でも間に合わないときに、ここまでは速めて鳴らす
+const MIN_GAP = 0.06;    // これより短いすき間しかできないなら、弱い音を切り離さずにつなげて鳴らす
+
+function voiceSpans(S, sy) {
+  const pcs = S.beats.map((b) => sy[b.stress][0] + (sy[b.stress][2] - sy[b.stress][0]) * P_CENTER);
+  return {
+    pcs,
+    spans: pcs.slice(1).map((p, k) => p - pcs[k]),
+    first: S.pickup.length ? pcs[0] - sy[S.pickup[0]][0] : 0,
+    last: sy[sy.length - 1][1] - pcs[pcs.length - 1],
+  };
+}
+
+// ゆっくりの音声から順に、強い音どうしの間が1拍に収まるものを選ぶ
+function pickClip(S, clips, d) {
+  const need = (c) => {
+    const { spans, first, last } = voiceSpans(S, c.sylls);
+    return Math.max(Math.max(0, ...spans) / (d * 0.98), (first + last) / (d * 2 * 0.98));
+  };
+  const avail = VOICE_RATES.map((k) => clips[k]).filter(Boolean);
+  const fit = avail.find((c) => need(c) <= 1);
+  if (fit) return { clip: fit, rate: 1 };
+  const fastest = avail[avail.length - 1];
+  return { clip: fastest, rate: Math.min(MAX_SPEEDUP, need(fastest)) };
+}
+
+// 強い音節を手拍子に合わせ、そのあとの別の語の弱い音は次の手拍子の直前にすべりこませる
+function voiceEvents(S, { clip, rate }, cs, d, item, vol) {
+  const sy = clip.sylls;
+  const { pcs } = voiceSpans(S, sy);
+  const at = (k, x) => cs + d * (k + 1) + (x - pcs[k]) / rate;
+  const groupStart = (k) => sy[S.beats[k].stress][0];
+  const segs = [];
+  if (S.pickup.length) {
+    const a = sy[S.pickup[0]][0];
+    segs.push({ a, b: groupStart(0), t: at(0, a), list: S.pickup });
+  }
+  S.beats.forEach((bt, k) => {
+    const isLast = k === S.beats.length - 1;
+    const w = S.sylls[bt.stress].word;
+    const nHead = bt.weak.findIndex((si) => S.sylls[si].word !== w);
+    const head = [bt.stress, ...(nHead < 0 ? bt.weak : bt.weak.slice(0, nHead))];
+    const tail = nHead < 0 ? [] : bt.weak.slice(nHead);
+    const a = groupStart(k);
+    const b = isLast ? Math.min(clip.dur, sy[sy.length - 1][1] + 0.05) : groupStart(k + 1);
+    if (!isLast && tail.length) {
+      const ta = sy[tail[0]][0];
+      const tailT = at(k + 1, b) - (b - ta) / rate;
+      if (tailT - at(k, ta) >= MIN_GAP) {
+        segs.push({ a, b: ta, t: at(k, a), list: head });
+        segs.push({ a: ta, b, t: tailT, list: tail });
+        return;
+      }
+    }
+    segs.push({ a, b, t: at(k, a), list: [...head, ...tail] });
+  });
+  const events = [];
+  segs.forEach((s, i) => {
+    const next = segs[i + 1];
+    const dur = Math.min(s.b - s.a, next ? (next.t - s.t) * rate : Infinity);
+    events.push({ t: s.t, kind: 'voice', sound: 'voice', buffer: clip.buffer, offset: s.a, dur, rate, vol });
+    s.list.forEach((si) => events.push({ t: s.t + (sy[si][0] - s.a) / rate, kind: 'syl', si, item }));
+  });
+  return events;
+}
+
 // 拍の並び（時刻つきの出来事の列）を作る
-// 1回分 = すき間の拍1つ + 強い音の拍。弱い音節は拍の中に等間隔に置く
-function buildTimeline(parsedList, { bpm, cycles, ramp = 0, countIn = 3 }) {
+// 1回分 = すき間の拍1つ + 強い音の拍。声がないときは、弱い音節を拍の中に等間隔に置く
+// voices[item] があれば、その文のお手本の声（速さごとの音声）を拍に並べる。clap=false なら手拍子を鳴らさない
+function buildTimeline(parsedList, { bpm, cycles, ramp = 0, countIn = 3, voices = [], clap = true }) {
   const events = [];
   let t = 0;
   let b = bpm;
@@ -668,20 +769,31 @@ function buildTimeline(parsedList, { bpm, cycles, ramp = 0, countIn = 3 }) {
   for (let c = 0; c < cycles; c++) {
     const item = c % parsedList.length;
     const S = parsedList[item];
+    const clips = voices[item];
     const d = 60 / b;
     const cs = t;
     const nCols = S.beats.length + 1;
+    const clapVol = clips ? 0.6 : 1;
     events.push({ t: cs, kind: 'cycle', item, cycle: c, bpm: b, d, nCols, sound: 'tick', freq: 820, vol: 0.22 });
-    S.pickup.forEach((si, j) => events.push({ t: cs + d * (j + 1) / (S.pickup.length + 1), kind: 'syl', si, item }));
     S.beats.forEach((bt, k) => {
       const bs = cs + d * (k + 1);
-      events.push({ t: bs, kind: 'beat', k, item, sound: 'clap', vol: k === 0 ? 1 : 0.8 });
-      events.push({ t: bs, kind: 'syl', si: bt.stress, item });
-      bt.weak.forEach((si, j) => events.push({ t: bs + d * (j + 1) / (bt.weak.length + 1), kind: 'syl', si, item }));
+      events.push({ t: bs, kind: 'beat', k, item, sound: clap ? 'clap' : null, vol: (k === 0 ? 1 : 0.8) * clapVol });
     });
+    if (clips) {
+      events.push(...voiceEvents(S, pickClip(S, clips, d), cs, d, item, 1));
+    } else {
+      S.pickup.forEach((si, j) => events.push({ t: cs + d * (j + 1) / (S.pickup.length + 1), kind: 'syl', si, item }));
+      S.beats.forEach((bt, k) => {
+        const bs = cs + d * (k + 1);
+        events.push({ t: bs, kind: 'syl', si: bt.stress, item });
+        bt.weak.forEach((si, j) => events.push({ t: bs + d * (j + 1) / (bt.weak.length + 1), kind: 'syl', si, item }));
+      });
+    }
     t = cs + d * nCols;
     if (c < cycles - 1) b += ramp;
   }
+  // 最後の声が鳴り終わるまでは止めない
+  events.filter((e) => e.kind === 'voice').forEach((e) => { t = Math.max(t, e.t + e.dur / e.rate + 0.05); });
   events.push({ t, kind: 'end', bpm: b });
   events.sort((a, b2) => a.t - b2.t);
   return { events };
@@ -727,58 +839,61 @@ function laneAnimator(lanes, statusEl, fmt = {}) {
   };
 }
 
-// ===== 読み上げ =====
-const Voice = (() => {
-  let voices = [];
-  const score = (v) => {
-    let s = 0;
-    if (/natural|online|neural/i.test(v.name)) s += 50;
-    if (/google/i.test(v.name)) s += 30;
-    if (/samantha|aria|jenny|guy|ava|zira/i.test(v.name)) s += 15;
-    if (/^en[-_]US/i.test(v.lang)) s += 10;
-    return s;
-  };
-  function load(select, warnEl, saved) {
-    if (!('speechSynthesis' in window)) {
-      warnEl.textContent = 'このブラウザは読み上げに対応していません。お手本は使えませんが、手拍子の練習はできます。';
-      return;
+// ===== お手本の声（Azure の音声合成で作った mp3 と音節の時刻。tools/gen_audio.py で生成） =====
+const Speech = (() => {
+  const idBySrc = new Map();
+  const buffers = new Map();
+  let manifest = null;
+  const ready = fetch('audio/manifest.json')
+    .then((r) => { if (!r.ok) throw new Error(`お手本の声の一覧を読めませんでした（HTTP ${r.status}）`); return r.json(); })
+    .then((m) => {
+      manifest = m;
+      Object.entries(m.items).forEach(([id, e]) => idBySrc.set(e.src, id));
+    });
+  ready.catch((e) => console.error(e));
+
+  function load(key) {
+    if (!buffers.has(key)) {
+      const p = fetch(`audio/${key}.mp3`)
+        .then((r) => { if (!r.ok) throw new Error(`お手本の声を読めませんでした: ${key}（HTTP ${r.status}）`); return r.arrayBuffer(); })
+        .then((ab) => Engine.decode(ab));
+      p.catch(() => buffers.delete(key));
+      buffers.set(key, p);
     }
-    voices = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang)).sort((a, b) => score(b) - score(a));
-    select.replaceChildren(...voices.map((v) => {
-      const o = document.createElement('option');
-      o.value = v.name;
-      o.textContent = `${v.name} (${v.lang})`;
-      return o;
-    }));
-    if (saved && voices.some((v) => v.name === saved)) select.value = saved;
-    warnEl.textContent = voices.length ? '' : '英語の読み上げ音声が見つかりません。Chrome か Edge だと英語の声が使えることが多いです。';
+    return buffers.get(key);
   }
-  function speak(parsed, { voiceName, rate, lane, onEnd }) {
-    if (!('speechSynthesis' in window)) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(parsed.spoken);
-    const v = voices.find((x) => x.name === voiceName);
-    if (v) u.voice = v;
-    u.lang = v ? v.lang : 'en-US';
-    u.rate = rate;
-    let lit = [];
-    const unlight = () => { lit.forEach((e) => e.classList.remove('on')); lit = []; };
-    if (lane) {
-      u.onboundary = (e) => {
-        if (e.name && e.name !== 'word') return;
-        let wi = 0;
-        parsed.wordStart.forEach((p, i) => { if (p <= e.charIndex) wi = i; });
-        unlight();
-        lit = parsed.words[wi].sylls.map((si) => lane.sylEls[si]);
-        lit.forEach((el) => el.classList.add('on'));
-      };
-    }
-    u.onend = () => { unlight(); onEnd?.(); };
-    u.onerror = (e) => { unlight(); if (e.error !== 'canceled' && e.error !== 'interrupted') console.error('読み上げエラー:', e.error); onEnd?.(); };
-    speechSynthesis.speak(u);
+
+  // 1つの文・1つの声・1つの速さの音声
+  async function clip(src, voice, rate) {
+    await ready;
+    const id = idBySrc.get(src);
+    const info = id && manifest.items[id][voice]?.[rate];
+    if (!info) throw new Error(`お手本の声がない文です: ${src}`);
+    const buffer = await load(`${voice}/${id}-${rate}`);
+    return { buffer, dur: info.dur / 1000, sylls: info.sylls.map((s) => s.map((x) => x / 1000)) };
   }
-  return { load, speak };
+
+  // 拍に並べるための、3つの速さの音声
+  async function clips(src, voice) {
+    const list = await Promise.all(VOICE_RATES.map((r) => clip(src, voice, r)));
+    return Object.fromEntries(VOICE_RATES.map((r, i) => [r, list[i]]));
+  }
+
+  return { ready, clip, clips };
 })();
+
+// 声だけを自然な速さで鳴らし、音節を光らせる（お手本・聞き取り用）
+function speakClip(c, lane) {
+  const events = [{ t: 0, kind: 'voice', sound: 'voice', buffer: c.buffer, offset: 0, dur: c.dur, rate: 1, vol: 1 }];
+  if (lane) c.sylls.forEach((s, si) => events.push({ t: s[0], kind: 'syl', si, item: 0 }));
+  events.push({ t: c.dur, kind: 'end' });
+  events.sort((a, b) => a.t - b.t);
+  const anim = lane ? laneAnimator([lane], { textContent: '' }) : null;
+  Engine.play({ events }, {
+    onEvent: (e) => anim?.onEvent(e),
+    onStop: () => anim?.reset(),
+  });
+}
 
 // ===== 保存 =====
 const STORE_KEY = 'rhythmEnglish_v1';
@@ -817,24 +932,38 @@ function setupDemo(hostId, srcs, btnId, statusId, opts) {
   const btn = document.getElementById(btnId);
   const status = document.getElementById(statusId);
   const anim = laneAnimator(lanes, status, opts.fmt);
-  btn.addEventListener('click', () => {
-    if (btn.dataset.playing) { Engine.stop(); return; }
+  const label = btn.textContent;
+  const reset = () => {
+    anim.reset();
+    status.textContent = '';
+    delete btn.dataset.playing;
+    btn.textContent = label;
+  };
+  btn.addEventListener('click', async () => {
+    if (btn.dataset.playing) { stopAll(); reset(); return; }
     stopAll();
-    const label = btn.textContent;
+    try { Engine.ensure(); } catch (e) { status.textContent = e.message; return; }
     btn.dataset.playing = '1';
     btn.textContent = '■ 止める';
-    const tl = buildTimeline(lanes.map((l) => l.parsed), { bpm: opts.bpm, cycles: opts.cycles ?? lanes.length });
-    Engine.play(tl, {
-      onEvent: anim.onEvent,
-      onFrame: anim.onFrame,
-      onStop: () => {
-        anim.reset();
-        status.textContent = '';
-        delete btn.dataset.playing;
-        btn.textContent = label;
-      },
-    });
+    const token = playToken;
+    pendingReset = reset;
+    const voices = opts.mora ? [] : await loadVoices(srcs, status);
+    if (token !== playToken) return;
+    pendingReset = null;
+    const tl = buildTimeline(lanes.map((l) => l.parsed), { bpm: opts.bpm, cycles: opts.cycles ?? lanes.length, voices });
+    Engine.play(tl, { onEvent: anim.onEvent, onFrame: anim.onFrame, onStop: reset });
   });
+}
+
+// 文ごとに、拍に並べるお手本の声を読みこむ。読めなければ手拍子だけで続ける
+async function loadVoices(srcs, warnEl) {
+  try {
+    return await Promise.all(srcs.map((src) => Speech.clips(src, $('voice').value)));
+  } catch (e) {
+    console.error(e);
+    warnEl.textContent = 'お手本の声を読みこめなかったので、手拍子だけで鳴らします。';
+    return [];
+  }
 }
 
 // ===== ② クイズ =====
@@ -1003,29 +1132,32 @@ function showRecording(blob) {
 
 function setupWork() {
   const s = store.settings;
+  const setIf = (id, v) => { if (v != null && [...$(id).options].some((o) => o.value === String(v))) $(id).value = String(v); };
   if (s.bpm) $('bpm').value = s.bpm;
-  if (s.cycles) $('cycles').value = String(s.cycles);
-  if (s.rate) $('rate').value = String(s.rate);
+  setIf('cycles', s.cycles);
+  setIf('rate', s.rate);
+  setIf('voice', s.voice);
+  setIf('mix', s.mix);
   $('ramp').checked = !!s.ramp;
   $('bpmVal').textContent = $('bpm').value;
   const saveSettings = () => {
     store.settings = {
       bpm: +$('bpm').value, cycles: +$('cycles').value, ramp: $('ramp').checked,
-      rate: +$('rate').value, voice: $('voice').value,
+      rate: $('rate').value, voice: $('voice').value, mix: $('mix').value,
     };
     saveStore();
   };
   $('bpm').addEventListener('input', () => { $('bpmVal').textContent = $('bpm').value; saveSettings(); });
-  ['cycles', 'ramp', 'rate', 'voice'].forEach((id) => $(id).addEventListener('change', saveSettings));
-
-  const loadVoices = () => Voice.load($('voice'), $('voiceWarn'), store.settings.voice);
-  loadVoices();
-  if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', loadVoices);
+  ['cycles', 'ramp', 'rate', 'voice', 'mix'].forEach((id) => $(id).addEventListener('change', saveSettings));
 
   const playBtn = $('workPlay');
   const status = $('workStatus');
+  const resetBtn = () => {
+    delete playBtn.dataset.playing;
+    playBtn.textContent = '▶ リズムで練習';
+  };
   playBtn.addEventListener('click', async () => {
-    if (Engine.running() && playBtn.dataset.playing) { Engine.stop(); return; }
+    if (playBtn.dataset.playing) { stopAll(); status.textContent = ''; resetBtn(); return; }
     stopAll();
     try { Engine.ensure(); } catch (e) { status.textContent = e.message; return; }
     const it = work.item;
@@ -1033,32 +1165,38 @@ function setupWork() {
     const cycles = +$('cycles').value;
     const ramp = $('ramp').checked ? 6 : 0;
     const bpm = +$('bpm').value;
+    const mix = $('mix').value;
     $('recBox').replaceChildren();
+    $('voiceWarn').textContent = '';
+    playBtn.dataset.playing = '1';
+    playBtn.textContent = '■ 止める';
+    const token = playToken;
+    pendingReset = resetBtn;
+    const voices = mix === 'clap' ? [] : await loadVoices([it.t], $('voiceWarn'));
+    if (token !== playToken) return;
     if ($('recOn').checked) {
       try {
         work.rec = await startRecording();
       } catch (e) {
-        $('recBox').innerHTML = '';
         const w = document.createElement('div');
         w.className = 'warn';
         w.textContent = `マイクが使えませんでした（${e.message}）。録音なしで続けます。`;
-        $('recBox').appendChild(w);
+        $('recBox').replaceChildren(w);
         work.rec = null;
       }
+      if (token !== playToken) { work.rec?.stop(); work.rec = null; return; }
     }
-    playBtn.dataset.playing = '1';
-    playBtn.textContent = '■ 止める';
+    pendingReset = null;
     const anim = laneAnimator([work.lane], status, {
       count: (e) => ['いち', 'に', 'さん'][e.n - 1] || String(e.n),
       cycle: (e) => `${e.cycle + 1} / ${cycles} 回目　テンポ ${e.bpm}`,
     });
-    Engine.play(buildTimeline([parsed], { bpm, cycles, ramp }), {
+    Engine.play(buildTimeline([parsed], { bpm, cycles, ramp, voices, clap: mix !== 'voice' }), {
       onEvent: anim.onEvent,
       onFrame: anim.onFrame,
       onStop: async (completed) => {
         anim.reset();
-        delete playBtn.dataset.playing;
-        playBtn.textContent = '▶ リズムで練習';
+        resetBtn();
         const finalBpm = bpm + ramp * (cycles - 1);
         if (completed) {
           status.textContent = ramp ? `おつかれさま！ 最後はテンポ ${finalBpm}` : 'おつかれさま！';
@@ -1081,13 +1219,25 @@ function setupWork() {
     });
   });
 
-  const speakBtn = $('workSpeak');
-  speakBtn.addEventListener('click', () => {
-    stopAll();
-    Voice.speak(work.lane.parsed, { voiceName: $('voice').value, rate: +$('rate').value, lane: work.lane });
-  });
+  $('workSpeak').addEventListener('click', () => speakSample(work.item.t, $('rate').value, work.lane, $('voiceWarn')));
 
   renderWork();
+}
+
+// お手本の声を自然な読み方で1回鳴らす
+async function speakSample(src, rate, lane, warnEl) {
+  stopAll();
+  try { Engine.ensure(); } catch (e) { warnEl.textContent = e.message; return; }
+  const token = playToken;
+  try {
+    const c = await Speech.clip(src, $('voice').value, rate);
+    if (token !== playToken) return;
+    warnEl.textContent = '';
+    speakClip(c, lane);
+  } catch (e) {
+    console.error(e);
+    warnEl.textContent = 'お手本の声を読みこめませんでした。通信状態を確かめて、もう一度押してください。';
+  }
 }
 
 // ===== ④ 聞き取り =====
@@ -1113,12 +1263,9 @@ function nextListen() {
 
 function setupListen() {
   $('lsPlay').addEventListener('click', () => {
-    stopAll();
-    Voice.speak(listen.parsed, {
-      voiceName: $('voice').value,
-      rate: Math.max(1, +$('rate').value),
-      lane: $('lsFull').hidden ? null : listen.lane,
-    });
+    // 聞き取りは自然な速さ（「速め」を選んでいればそれ）で
+    const rate = $('rate').value === 'q' ? 'q' : 'n';
+    speakSample(listen.item.t, rate, $('lsFull').hidden ? null : listen.lane, $('lsWarn'));
   });
   $('lsReveal1').addEventListener('click', () => {
     const P = listen.parsed;
@@ -1135,9 +1282,14 @@ function setupListen() {
   nextListen();
 }
 
+// 読みこみ中に別のボタンが押されたら、その再生は取りやめる
+let playToken = 0;
+let pendingReset = null;
 function stopAll() {
+  playToken++;
   Engine.stop();
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  pendingReset?.();
+  pendingReset = null;
 }
 
 // ===== 起動 =====
