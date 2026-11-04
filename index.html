@@ -186,6 +186,15 @@ table.tbl { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 8
   min-width: 70px; text-align: center; padding: 10px 12px; border-radius: 10px; font-weight: 800; font-size: 1.2rem;
   background: #fff; border: 2px dashed #e2a48c; color: var(--accent);
 }
+.tab:disabled { cursor: default; color: var(--muted); background: #f3eee6; }
+.ls-progress { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--muted); font-weight: 700; }
+.ls-bar { flex: 1; max-width: 320px; height: 8px; border-radius: 999px; background: #efe5d8; overflow: hidden; }
+.ls-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #e07a52, #b44a2c); transition: width .3s; }
+.btn-row[hidden] { display: none; }
+.ls-ok { color: var(--ok); font-weight: 800; }
+.ls-ng { color: var(--ng); font-weight: 800; }
+.ls-clear { margin: 12px 0; padding: 14px; border-radius: 14px; border: 2px solid #ecc9b9; background: #fffaf6; }
+.ls-clear-title { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
 footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20px 16px 40px; }
 
 @media (max-width: 560px) {
@@ -370,13 +379,28 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
 <section class="card" id="listen">
   <h2><span class="badge">4</span>聞き取りに使う</h2>
   <p>唱える練習でリズムが体に入ったら、聞くときにも使えます。全部の単語を拾おうとせず、<b>強い音（手拍子の位置）の単語だけ</b>を拾ってみましょう。強い語だけで、文の意味はほとんどわかります。</p>
-  <p>「▶ 聞く」を押すと、ランダムな文が読み上げられます。□ の数が強い音の数です。聞こえた強い語を思い浮かべてから、答えを開いてください。</p>
-  <div class="guess" id="guess"></div>
-  <div class="btn-row">
-    <button class="btn-primary" id="lsPlay">▶ 聞く</button>
-    <button class="btn" id="lsReveal1">強い語を見る</button>
-    <button class="btn" id="lsReveal2">文全体を見る</button>
-    <button class="btn" id="lsNext">次の文 →</button>
+  <p>「▶ 聞く」を押すと文が読み上げられます。□ の数が強い音の数です。聞こえた強い語を思い浮かべてから「強い語を見る」で答えを確かめ、聞き取れたら「○」、聞き取れなかったら「×」を押してください。× の文はステージの最後にもう一度出ます。全部 ○ になればクリアで、次のステージが開きます。</p>
+  <div class="tabs" id="lsTabs" role="tablist"></div>
+  <p class="level-desc" id="lsDesc"></p>
+  <div class="ls-progress"><div class="ls-bar"><span id="lsBar"></span></div><span id="lsCount"></span></div>
+  <div id="lsBody">
+    <div class="guess" id="guess"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="lsPlay">▶ 聞く</button>
+      <button class="btn" id="lsReveal1">強い語を見る</button>
+      <button class="btn" id="lsReveal2">文全体を見る</button>
+    </div>
+    <div class="btn-row" id="lsJudge" hidden>
+      <button class="btn ls-ok" id="lsOk">○ 聞き取れた</button>
+      <button class="btn ls-ng" id="lsNg">× もう一回</button>
+    </div>
+  </div>
+  <div class="ls-clear" id="lsClear" hidden>
+    <div class="ls-clear-title" id="lsClearTitle"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="lsNextStage">次のステージへ →</button>
+      <button class="btn" id="lsRetry">このステージをもう一度</button>
+    </div>
   </div>
   <div class="warn" id="lsWarn"></div>
   <div id="lsFull" hidden>
@@ -460,7 +484,41 @@ const LEVELS = [
   },
 ];
 
-const DEMO_JA = '*ね* *こ* *が* *ね* *ず* *み* *を* *お* *う*';
+// ④ 聞き取りのステージ4・5だけで使う長い文
+const LISTEN_EXTRA = [
+  { id: 'x4-1', t: 'What *time* do you *think* we should *leave* for the *air*port to*mor*·row?', ja: '明日は何時に空港へ出発したらいいと思う？', notes: ['do you は「ドゥヤ」、for the は「ファダ」。'] },
+  { id: 'x4-2', t: "I'd *love* to *come*, but I have to *fin*ish my re*port* by *Fri*day.", ja: '行きたいけど、金曜までに報告書を仕上げないといけないんだ。', notes: ['but I have to は「バライハフタ」と1かたまり。'] },
+  { id: 'x4-3', t: 'He was sup*posed* to *call* me when he *got* to the ho*tel* last *night*.', ja: '彼は昨夜ホテルに着いたら電話をくれるはずだった。', notes: ['supposed to は「スポーストゥ」→「スポスタ」。', 'got to the は「ガッタダ」。'] },
+  { id: 'x4-4', t: 'I was *hop*ing that we could *meet* for *cof*fee be*fore* the *meet*ing.', ja: '会議の前にコーヒーでも飲めたらと思っていたんだ。', notes: ['hoping that we could の4つの弱い音を、1拍のすき間に押しこみます。'] },
+  { id: 'x4-5', t: "You should have *told* me that you were *go*ing to be *late* for the *par*ty on *Sat*ur·day.", ja: '土曜のパーティーに遅れるなら、言ってくれればよかったのに。', notes: ['You should have は「ユシュダ」。', 'going to be は「ガナビ」。'] },
+  { id: 'x4-6', t: 'We were *go*ing to *have* a *pic*nic, but it *start*ed to *rain*.', ja: 'ピクニックをするつもりだったけど、雨が降りだした。', notes: ['picnic, but it は「ピクニックバリッ」とつながります。'] },
+  { id: 'x4-7', t: "She *told* me that she'd *been* to the *doc*tor a*bout* her *back*.", ja: '彼女は、背中のことでお医者さんに行ってきたと言っていた。', notes: ["me that she'd は「ミダシード」と弱く速く。"] },
+  { id: 'x4-8', t: '*Some*bod·y *left* an um*brel*la on the *train* this *morn*ing.', ja: '今朝、だれかが電車に傘を忘れていった。', notes: ['umbrella は BREL が強く、um と la は弱い。'] },
+  { id: 'x5-1', t: "*Hon*est·ly, I would have *called* you if I'd *known* that you were *go*ing to be in *town* for the *week*end.", ja: '正直、週末にこっちに来ると知っていたら電話したのに。', notes: ['I would have は「アイウダ」、going to be in は「ガナビン」。'] },
+  { id: 'x5-2', t: "If you'd *told* me that you were *go*ing to be *late*, I could have *wait*ed for you at the *front* of the *sta*tion.", ja: '遅れるって言ってくれたら、駅の前で待っていられたのに。', notes: ['waited for you at the は弱い音が5つ。「ウェイティッフォユアダ」と一気に。'] },
+  { id: 'x5-3', t: "What do you *think* you're *go*ing to be *do*ing at this *time* *next* *year*?", ja: '来年の今ごろ、何をしていると思う？', notes: ['最後の time next year は強い音が3つ続きます。1拍ずつ、ゆったり。'] },
+  { id: 'x5-4', t: "I've been *mean*ing to *ask* if you'd be *in*ter·est·ed in *com*ing to the *con*cert with us on *Fri*day.", ja: '金曜のコンサートに一緒に来ないか、聞こうと思っていたんだ。', notes: ['interested は IN が強く、残りは弱い。', 'concert with us on は「カンサーウィザソン」。'] },
+  { id: 'x5-5', t: 'It would have been a *lot* *eas*i·er if we had *left* a *lit*tle bit *ear*li·er in the *morn*ing.', ja: '朝もう少し早く出ていれば、ずっと楽だったのに。', notes: ['It would have been a は「イウダビナ」。弱い音5つが、手拍子の前に全部入ります。'] },
+  { id: 'x5-6', t: "Do you *know* if there's *an*y·where a*round* here where I can *get* a *de*cent cup of *cof*fee?", ja: 'このあたりで、ちゃんとしたコーヒーが飲める店を知りませんか？', notes: ['here where I can の4つは、つぶして「ヒアウェアイクン」。'] },
+  { id: 'x5-7', t: "I'm *sor*ry, but I don't *think* I'm *go*ing to be *a*ble to *make* it to the *meet*ing this af·ter*noon*.", ja: 'ごめん、今日の午後の会議には出られそうにない。', notes: ["but I don't は「バライドン」。速い会話では don't も弱くなります。", 'afternoon は NOON が強い。'] },
+  { id: 'x5-8', t: "As *soon* as I've *fin*ished what I'm *do*ing, I'll *come* and *help* you with the *dish*es.", ja: '今やっていることが終わったら、すぐ皿洗いを手伝いに行くね。', notes: ["finished what I'm は「フィニシュトワライム」。"] },
+];
+
+// ④ 聞き取りのステージ。前のステージをクリアすると次が開く
+const LISTEN_STAGES = [
+  { name: 'ステージ1', desc: '強い音2〜3つの短い文。弱い音は少なめです。', rate: 'n',
+    ids: ['l1-1', 'l1-2', 'l1-3', 'l1-4', 'l2-1', 'l2-2', 'l2-3', 'f-1', 'f-3', 'f-21'] },
+  { name: 'ステージ2', desc: '強い音のすき間に、弱い音が2〜3個まとまって入ります。', rate: 'n',
+    ids: ['f-2', 'f-4', 'f-5', 'f-7', 'f-12', 'l2-4', 'f-6', 'f-10', 'f-13', 'f-14', 'f-15', 'f-22', 'l3-4', 'f-9'] },
+  { name: 'ステージ3', desc: '弱い音がさらに増え、gonna のように形が変わる音も入ります。強い音4つの長い文もあります。', rate: 'n',
+    ids: ['l3-1', 'l3-2', 'l3-3', 'f-8', 'f-11', 'f-16', 'f-18', 'f-20', 'b-3', 'b-4', 'f-17', 'f-19', 'b-1', 'b-2'] },
+  { name: 'ステージ4', desc: '強い音5つの長い文。すき間に弱い音が3〜4個入るところもあります。', rate: 'n',
+    ids: LISTEN_EXTRA.filter((it) => it.id.startsWith('x4-')).map((it) => it.id) },
+  { name: 'ステージ5', desc: '強い音6つ以上の長い文を、速めに読みます。すき間に弱い音が4〜5個詰まっています。強い音だけを追いかけましょう。', rate: 'q',
+    ids: LISTEN_EXTRA.filter((it) => it.id.startsWith('x5-')).map((it) => it.id) },
+];
+
+const DEMO_JA ='*ね* *こ* *が* *ね* *ず* *み* *を* *お* *う*';
 const DEMO_EN = 'The *cats* *chase* the *mice*.';
 const LADDER = [
   '*Cats* *chase* *mice*.',
@@ -844,7 +902,8 @@ const Speech = (() => {
   const idBySrc = new Map();
   const buffers = new Map();
   let manifest = null;
-  const ready = fetch('audio/manifest.json')
+  // 例文を足すと作り直すので、毎回サーバーに更新を確かめる
+  const ready = fetch('audio/manifest.json', { cache: 'no-cache' })
     .then((r) => { if (!r.ok) throw new Error(`お手本の声の一覧を読めませんでした（HTTP ${r.status}）`); return r.json(); })
     .then((m) => {
       manifest = m;
@@ -854,7 +913,7 @@ const Speech = (() => {
 
   function load(key) {
     if (!buffers.has(key)) {
-      const p = fetch(`audio/${key}.mp3`)
+      const p = fetch(`audio/${key}.mp3`, { cache: 'no-cache' })
         .then((r) => { if (!r.ok) throw new Error(`お手本の声を読めませんでした: ${key}（HTTP ${r.status}）`); return r.arrayBuffer(); })
         .then((ab) => Engine.decode(ab));
       p.catch(() => buffers.delete(key));
@@ -901,10 +960,10 @@ function loadStore() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const v = raw ? JSON.parse(raw) : {};
-    return { best: v.best || {}, settings: v.settings || {} };
+    return { best: v.best || {}, settings: v.settings || {}, listen: v.listen || {} };
   } catch (e) {
     console.warn('保存データを読めませんでした:', e);
-    return { best: {}, settings: {} };
+    return { best: {}, settings: {}, listen: {} };
   }
 }
 let store = loadStore();
@@ -1241,13 +1300,78 @@ async function speakSample(src, rate, lane, warnEl) {
 }
 
 // ===== ④ 聞き取り =====
-const ALL_ITEMS = LEVELS.flatMap((lv) => lv.items);
-const listen = { item: null, parsed: null, lane: null };
+// 進み具合は store.listen = { stage: 今のステージ, cleared: {番号: true}, done: {番号: [○にした文のid]} }
+const ITEM_BY_ID = new Map([...LEVELS.flatMap((lv) => lv.items), ...LISTEN_EXTRA].map((it) => [it.id, it]));
+const listen = { stage: 0, queue: [], item: null, parsed: null, lane: null };
+
+const lsState = () => {
+  const L = store.listen;
+  L.cleared ??= {};
+  L.done ??= {};
+  return L;
+};
+const stageUnlocked = (i) => i === 0 || !!lsState().cleared[i - 1];
+const stageDone = (i) => lsState().done[i] ?? [];
+
+function shuffle(list) {
+  const a = [...list];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderListenTabs() {
+  const L = lsState();
+  $('lsTabs').replaceChildren(...LISTEN_STAGES.map((st, i) => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (i === listen.stage ? ' on' : '');
+    b.setAttribute('role', 'tab');
+    b.disabled = !stageUnlocked(i);
+    b.textContent = (b.disabled ? '🔒 ' : '') + st.name + (L.cleared[i] ? ' ✓' : '');
+    b.addEventListener('click', () => startStage(i));
+    return b;
+  }));
+}
+
+function renderListenProgress() {
+  const st = LISTEN_STAGES[listen.stage];
+  const n = stageDone(listen.stage).length;
+  $('lsCount').textContent = `○ ${n} / ${st.ids.length}`;
+  $('lsBar').style.width = `${(100 * n / st.ids.length).toFixed(1)}%`;
+}
+
+function startStage(i) {
+  stopAll();
+  listen.stage = i;
+  lsState().stage = i;
+  saveStore();
+  const done = new Set(stageDone(i));
+  listen.queue = shuffle(LISTEN_STAGES[i].ids.filter((id) => !done.has(id)));
+  $('lsDesc').textContent = LISTEN_STAGES[i].desc;
+  renderListenTabs();
+  nextListen();
+}
 
 function nextListen() {
   stopAll();
-  let it;
-  do { it = ALL_ITEMS[Math.floor(Math.random() * ALL_ITEMS.length)]; } while (ALL_ITEMS.length > 1 && it === listen.item);
+  renderListenProgress();
+  $('lsWarn').textContent = '';
+  const cleared = listen.queue.length === 0;
+  $('lsBody').hidden = cleared;
+  $('lsClear').hidden = !cleared;
+  $('lsFull').hidden = true;
+  if (cleared) {
+    const last = listen.stage === LISTEN_STAGES.length - 1;
+    $('lsClearTitle').textContent = last
+      ? `🎉 ${LISTEN_STAGES[listen.stage].name} クリア！ 全ステージ制覇です。`
+      : `🎉 ${LISTEN_STAGES[listen.stage].name} クリア！`;
+    $('lsNextStage').hidden = last;
+    return;
+  }
+  const it = ITEM_BY_ID.get(listen.queue[0]);
+  if (!it) throw new Error(`聞き取りの文が見つかりません: ${listen.queue[0]}`);
   listen.item = it;
   listen.parsed = parseSentence(it.t);
   $('guess').replaceChildren(...listen.parsed.beats.map(() => {
@@ -1256,16 +1380,29 @@ function nextListen() {
     sp.textContent = '□';
     return sp;
   }));
-  $('lsFull').hidden = true;
+  $('lsJudge').hidden = true;
   listen.lane = mountLane($('laneListen'), listen.parsed);
   $('lsJa').textContent = it.ja;
 }
 
+// ○ なら記録してキューから外し、× ならキューの最後へ回す
+function judgeListen(ok) {
+  const id = listen.queue.shift();
+  if (ok) {
+    const L = lsState();
+    L.done[listen.stage] = [...new Set([...stageDone(listen.stage), id])];
+    if (listen.queue.length === 0) L.cleared[listen.stage] = true;
+    saveStore();
+    renderListenTabs();
+  } else {
+    listen.queue.push(id);
+  }
+  nextListen();
+}
+
 function setupListen() {
   $('lsPlay').addEventListener('click', () => {
-    // 聞き取りは自然な速さ（「速め」を選んでいればそれ）で
-    const rate = $('rate').value === 'q' ? 'q' : 'n';
-    speakSample(listen.item.t, rate, $('lsFull').hidden ? null : listen.lane, $('lsWarn'));
+    speakSample(listen.item.t, LISTEN_STAGES[listen.stage].rate, $('lsFull').hidden ? null : listen.lane, $('lsWarn'));
   });
   $('lsReveal1').addEventListener('click', () => {
     const P = listen.parsed;
@@ -1273,13 +1410,22 @@ function setupListen() {
       const w = P.words[P.sylls[P.beats[i].stress].word];
       sp.textContent = w.text.replace(/[.,!?]/g, '');
     });
+    $('lsJudge').hidden = false;
   });
   $('lsReveal2').addEventListener('click', () => {
     $('lsReveal1').click();
     $('lsFull').hidden = false;
   });
-  $('lsNext').addEventListener('click', nextListen);
-  nextListen();
+  $('lsOk').addEventListener('click', () => judgeListen(true));
+  $('lsNg').addEventListener('click', () => judgeListen(false));
+  $('lsNextStage').addEventListener('click', () => startStage(listen.stage + 1));
+  $('lsRetry').addEventListener('click', () => {
+    lsState().done[listen.stage] = [];
+    saveStore();
+    startStage(listen.stage);
+  });
+  const saved = lsState().stage;
+  startStage(Number.isInteger(saved) && saved < LISTEN_STAGES.length && stageUnlocked(saved) ? saved : 0);
 }
 
 // 読みこみ中に別のボタンが押されたら、その再生は取りやめる
