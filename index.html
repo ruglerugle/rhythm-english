@@ -198,6 +198,20 @@ table.tbl { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 8
 .streak b { font-size: 1.4rem; color: var(--accent); }
 .streak .sub { color: var(--muted); font-size: .9rem; }
 .slot:not(:has(.player))::before { content: '練習したい文を選ぶと、ここに練習の画面が出ます。'; display: block; color: var(--muted); font-size: .88rem; margin-top: 8px; }
+.mp-stats { color: var(--muted); font-size: .9rem; margin: 0 0 10px; }
+.mp-box { margin: 10px 0; padding: 16px; border-radius: 14px; border: 1px solid var(--line); background: #fffaf3; text-align: center; }
+.mp-count { color: var(--muted); font-size: .9rem; }
+.mp-choices { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 14px 0 6px; }
+.mp-choices .btn { min-width: 7.5em; font-size: 1.25rem; font-weight: 700; padding: 12px 18px; }
+.mp-choices .btn.ok { background: #e3f3e9; border-color: var(--ok); color: var(--ok); }
+.mp-choices .btn.ng { background: #fbe4e2; border-color: var(--ng); color: var(--ng); }
+.mp-fb { min-height: 1.6em; font-weight: 700; margin: 6px 0; }
+.mp-fb.ok { color: var(--ok); }
+.mp-fb.ng { color: var(--ng); }
+.mp-compare { justify-content: center; }
+.mp-result { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+.mp-weak { text-align: left; display: inline-block; margin: 6px 0; font-size: .92rem; }
+.mp-weak ul { margin: 4px 0 0; padding-left: 1.3em; }
 .ls-clear-title { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
 footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20px 16px 40px; }
 
@@ -224,6 +238,7 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
     <li><a href="#work">③ ワーク</a></li>
     <li><a href="#listen">④ 聞き取り</a></li>
     <li><a href="#drill">⑤ 口トレ</a></li>
+    <li><a href="#minimal">⑥ 聞き分け</a></li>
   </ul>
 </nav>
 
@@ -429,6 +444,18 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
   <div class="slot" id="drSlot"></div>
 </section>
 
+<!-- ⑥ 聞き分けクイズ -->
+<section class="card" id="minimal">
+  <h2><span class="badge">6</span>聞き分けクイズ</h2>
+  <p>R と L のように日本語にない音の区別は、まず<b>耳</b>でつかめるようにならないと、口でも出せるようになりません。自分の発音が合っているかを判断しているのは、耳だからです。</p>
+  <p>単語が1つ読み上げられるので、どちらの単語だったかを選んでください。声は6人（アメリカ英語4人・イギリス英語2人）の中から毎回変わります。いろいろな人の声で聞くほど、声のちがいではなく<b>音そのもののちがい</b>に耳が慣れていきます。まちがえたら、両方の単語を聞き比べてから次へ進みましょう。口を使わない聞き分けの練習でも、発音まで良くなることが研究で知られています。</p>
+  <div class="tabs" id="mpTabs" role="tablist"></div>
+  <p class="level-desc" id="mpDesc"></p>
+  <p class="mp-stats" id="mpStats"></p>
+  <div class="mp-box" id="mpBox"></div>
+  <div class="warn" id="mpWarn"></div>
+</section>
+
 </main>
 <footer>英語リズム・トレーニング ― habatakijuku.com</footer>
 
@@ -609,6 +636,25 @@ const DRILLS = [
     ],
   },
 ];
+
+// ⑥ 聞き分けクイズ。1つの組の中の単語は、1つの音だけが違う
+const MINIMAL = [
+  { id: 'rl', name: 'R と L', desc: 'R は舌がどこにも付かず、こもった音。L は舌先が歯ぐきに付いて、すっきりした音です。',
+    sets: [['right', 'light'], ['road', 'load'], ['rice', 'lice'], ['grass', 'glass'], ['fry', 'fly'], ['correct', 'collect'], ['rock', 'lock'], ['pray', 'play'], ['wrong', 'long'], ['arrive', 'alive']] },
+  { id: 'th', name: 'TH と S・T', desc: 'TH は舌と歯のすき間から息がもれる、やわらかい音。S は鋭い「スー」、T ははじける音です。',
+    sets: [['think', 'sink'], ['thick', 'sick'], ['mouth', 'mouse'], ['path', 'pass'], ['faith', 'face'], ['three', 'tree'], ['thank', 'tank'], ['thin', 'tin']] },
+  { id: 'vb', name: 'V と B', desc: 'V は唇と歯がこすれて「ヴー」と続く音。B は両唇が一瞬で開く、はじける音です。',
+    sets: [['very', 'berry'], ['vote', 'boat'], ['vest', 'best'], ['curve', 'curb'], ['van', 'ban'], ['vet', 'bet']] },
+  { id: 'fh', name: 'F と H・P', desc: 'F は唇と歯の間から息がこすれる音。H はのどから出るただの息、P は両唇ではじける音です。',
+    sets: [['fine', 'pine'], ['fork', 'pork'], ['coffee', 'copy'], ['food', 'hood'], ['fat', 'hat'], ['fill', 'hill'], ['fair', 'hair']] },
+  { id: 'aa', name: 'ア系の母音', desc: '/æ/（cat）は「エ」寄りの平たいア、/ʌ/（cut）は短くあいまいなア、/ɑ/（cot）は口を縦に開けた深いアです。',
+    sets: [['cat', 'cut', 'cot'], ['hat', 'hut', 'hot'], ['bag', 'bug'], ['cap', 'cup'], ['ran', 'run'], ['match', 'much']] },
+  { id: 'iu', name: 'イ・ウ系の母音', desc: '長いほう（sheep・fool）は口に力が入ってはっきり、短いほう（ship・full）は力が抜けてあいまいに聞こえます。',
+    sets: [['sheep', 'ship'], ['seat', 'sit'], ['feel', 'fill'], ['heat', 'hit'], ['beat', 'bit'], ['eat', 'it'], ['fool', 'full'], ['pool', 'pull'], ['leak', 'lick']] },
+];
+// 毎回ランダムに選ぶ声。いろいろな人の声で聞くほど、音の違いそのものに耳が慣れる
+const MINIMAL_VOICES = ['us1', 'us2', 'us3', 'us4', 'uk1', 'uk2'];
+const MINIMAL_ROUND = 20;
 
 const DEMO_JA ='*ね* *こ* *が* *ね* *ず* *み* *を* *お* *う*';
 const DEMO_EN = 'The *cats* *chase* the *mice*.';
@@ -1052,10 +1098,10 @@ function loadStore() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const v = raw ? JSON.parse(raw) : {};
-    return { best: v.best || {}, settings: v.settings || {}, listen: v.listen || {}, drill: v.drill || {} };
+    return { best: v.best || {}, settings: v.settings || {}, listen: v.listen || {}, drill: v.drill || {}, minimal: v.minimal || {} };
   } catch (e) {
     console.warn('保存データを読めませんでした:', e);
-    return { best: {}, settings: {}, listen: {}, drill: {} };
+    return { best: {}, settings: {}, listen: {}, drill: {}, minimal: {} };
   }
 }
 let store = loadStore();
@@ -1618,8 +1664,156 @@ function renderDrill() {
   }));
 }
 
+// ===== ⑥ 聞き分けクイズ =====
+const MIX = { id: 'mix', name: 'ミックス', desc: '全部のカテゴリーからまぜて出題します。', sets: MINIMAL.flatMap((c) => c.sets) };
+const MP_CATS = [...MINIMAL, MIX];
+const mp = { cat: MINIMAL[0], q: null, n: 0, ok: 0, misses: [], answered: false };
+const mpAudio = new Audio();
+
+const setKey = (set) => set.join('/');
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+function el(tag, props = {}, ...kids) {
+  const e = Object.assign(document.createElement(tag), props);
+  e.append(...kids);
+  return e;
+}
+
+function mpPlay(voice, word) {
+  stopAll();
+  $('mpWarn').textContent = '';
+  mpAudio.src = `audio/words/${voice}/${word}.mp3`;
+  mpAudio.play().catch((e) => {
+    if (e.name === 'AbortError') return; // 次の単語を押して前の再生が打ち切られただけ
+    console.error(e);
+    $('mpWarn').textContent = '音声を再生できませんでした。通信状態を確かめて、もう一度押してください。';
+  });
+}
+
+// store.minimal[カテゴリー] = { n: 答えた数, ok: 正解数, best: 1回の最高点, miss: { 'right/light': まちがえた回数 } }
+function mpStat(id) {
+  return { n: 0, ok: 0, best: 0, miss: {}, ...store.minimal[id] };
+}
+
+function renderMinimalHead() {
+  $('mpTabs').replaceChildren(...MP_CATS.map((c) => {
+    const b = el('button', { className: 'tab' + (c === mp.cat ? ' on' : ''), textContent: c.name });
+    b.setAttribute('role', 'tab');
+    const st = mpStat(c.id);
+    if (st.n) b.appendChild(el('span', { className: 'pct', textContent: `${Math.round(100 * st.ok / st.n)}%` }));
+    b.addEventListener('click', () => {
+      mpAudio.pause();
+      Object.assign(mp, { cat: c, q: null, n: 0 });
+      renderMinimal();
+    });
+    return b;
+  }));
+  $('mpDesc').textContent = mp.cat.desc;
+  const st = mpStat(mp.cat.id);
+  $('mpStats').textContent = st.n
+    ? `これまでの正答率 ${Math.round(100 * st.ok / st.n)}%（${st.n}問）　最高 ${st.best} / ${MINIMAL_ROUND}`
+    : 'まだ挑戦していません';
+}
+
+function weakList(st) {
+  const top = Object.entries(st.miss).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  if (!top.length) return [];
+  const ul = el('ul', {}, ...top.map(([k, v]) => el('li', { textContent: `${k.replace(/\//g, ' / ')}　${v}回` })));
+  return [el('div', {}, el('div', { className: 'mp-weak' }, '苦手な組（まちがえた回数）', ul))];
+}
+
+const centerRow = (...kids) => el('div', { className: 'btn-row mp-compare' }, ...kids);
+
+function startRound() {
+  Object.assign(mp, { q: null, n: 0, ok: 0, misses: [] });
+  mpNext();
+}
+
+function renderMinimal() {
+  renderMinimalHead();
+  const box = $('mpBox');
+  const st = mpStat(mp.cat.id);
+  if (!mp.q) {
+    const finished = mp.n >= MINIMAL_ROUND;
+    const btn = el('button', { className: 'btn-primary', textContent: finished ? 'もう一度挑戦' : `▶ スタート（${MINIMAL_ROUND}問）` });
+    btn.addEventListener('click', startRound);
+    const head = finished ? [el('div', { className: 'mp-result', textContent: `${mp.ok} / ${MINIMAL_ROUND} 問正解` })] : [];
+    if (finished && mp.misses.length) head.push(el('div', { className: 'note', textContent: `まちがえた単語：${mp.misses.join('、')}` }));
+    box.replaceChildren(...head, ...weakList(st), centerRow(btn));
+    return;
+  }
+  const q = mp.q;
+  const replay = el('button', { className: 'btn', textContent: '🔊 もう一度聞く' });
+  replay.addEventListener('click', () => mpPlay(q.voice, q.word));
+  const choices = el('div', { className: 'mp-choices' }, ...q.set.map((w) => {
+    const b = el('button', { className: 'btn', textContent: w });
+    if (mp.answered) {
+      if (w === q.word) b.classList.add('ok');
+      else if (w === q.picked) b.classList.add('ng');
+      else b.disabled = true;
+    } else {
+      b.addEventListener('click', () => mpAnswer(w));
+    }
+    return b;
+  }));
+  const kids = [el('div', { className: 'mp-count', textContent: `${mp.n} / ${MINIMAL_ROUND} 問目` }), centerRow(replay), choices];
+  if (mp.answered) {
+    const right = q.picked === q.word;
+    kids.push(el('div', { className: 'mp-fb ' + (right ? 'ok' : 'ng'), textContent: right ? `○ 正解！ ${q.word}` : `× 正解は ${q.word}` }));
+    kids.push(centerRow('聞き比べ：', ...q.set.map((w) => {
+      const b = el('button', { className: 'btn', textContent: `🔊 ${w}` });
+      b.addEventListener('click', () => mpPlay(q.voice, w));
+      return b;
+    })));
+    const next = el('button', { className: 'btn-primary', textContent: mp.n < MINIMAL_ROUND ? '次へ →' : '結果を見る' });
+    next.addEventListener('click', mpNext);
+    kids.push(centerRow(next));
+  } else {
+    kids.push(el('div', { className: 'mp-fb' }));
+  }
+  box.replaceChildren(...kids);
+}
+
+function mpNext() {
+  if (mp.n >= MINIMAL_ROUND) {
+    const st = mpStat(mp.cat.id);
+    store.minimal[mp.cat.id] = { ...st, best: Math.max(st.best, mp.ok) };
+    saveStore();
+    mp.q = null;
+    renderMinimal();
+    return;
+  }
+  // 同じ組が続かないようにする
+  const sets = mp.cat.sets.filter((s) => !mp.q || s !== mp.q.set);
+  const set = pick(sets);
+  mp.q = { set, word: pick(set), voice: pick(MINIMAL_VOICES), picked: null };
+  mp.n++;
+  mp.answered = false;
+  renderMinimal();
+  mpPlay(mp.q.voice, mp.q.word);
+}
+
+function mpAnswer(w) {
+  const q = mp.q;
+  const right = w === q.word;
+  q.picked = w;
+  mp.answered = true;
+  if (right) mp.ok++;
+  else mp.misses.push(q.word);
+  // 記録はカテゴリーごと。ミックスで答えた分は、その組の元のカテゴリーにも数える
+  const owners = new Set([mp.cat.id, MINIMAL.find((c) => c.sets.includes(q.set)).id]);
+  owners.forEach((id) => {
+    const st = mpStat(id);
+    const miss = right ? st.miss : { ...st.miss, [setKey(q.set)]: (st.miss[setKey(q.set)] || 0) + 1 };
+    store.minimal[id] = { ...st, n: st.n + 1, ok: st.ok + (right ? 1 : 0), miss };
+  });
+  saveStore();
+  renderMinimal();
+}
+
 setupQuiz();
 setupWork();
+renderMinimal();
 setupListen();
 </script>
 </body>
