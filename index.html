@@ -194,6 +194,10 @@ table.tbl { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 8
 .ls-ok { color: var(--ok); font-weight: 800; }
 .ls-ng { color: var(--ng); font-weight: 800; }
 .ls-clear { margin: 12px 0; padding: 14px; border-radius: 14px; border: 2px solid #ecc9b9; background: #fffaf6; }
+.streak { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; background: var(--accent-soft); }
+.streak b { font-size: 1.4rem; color: var(--accent); }
+.streak .sub { color: var(--muted); font-size: .9rem; }
+.slot:not(:has(.player))::before { content: '練習したい文を選ぶと、ここに練習の画面が出ます。'; display: block; color: var(--muted); font-size: .88rem; margin-top: 8px; }
 .ls-clear-title { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
 footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20px 16px 40px; }
 
@@ -219,6 +223,7 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
     <li><a href="#words">② 強い語・弱い語</a></li>
     <li><a href="#work">③ ワーク</a></li>
     <li><a href="#listen">④ 聞き取り</a></li>
+    <li><a href="#drill">⑤ 口トレ</a></li>
   </ul>
 </nav>
 
@@ -347,6 +352,7 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
   <p class="level-desc" id="levelDesc"></p>
   <div class="sent-list" id="sentList"></div>
 
+  <div class="slot" id="workSlot">
   <div class="player" id="player">
     <div class="lane-wrap"><div id="laneWork"></div></div>
     <div class="ja" id="workJa"></div>
@@ -372,6 +378,7 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
     </div>
     <div class="warn" id="voiceWarn"></div>
     <div class="rec-box" id="recBox"></div>
+  </div>
   </div>
 </section>
 
@@ -407,6 +414,19 @@ footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 20
     <div class="lane-wrap"><div id="laneListen"></div></div>
     <div class="ja" id="lsJa"></div>
   </div>
+</section>
+
+<!-- ⑤ 毎日の口トレ -->
+<section class="card" id="drill">
+  <h2><span class="badge">5</span>毎日の口トレ</h2>
+  <p>日本語にない口の動きを、毎日少しずつ体に覚えさせる練習です。1つのメニューは1〜2分。全部を毎日やらなくてもかまいません。<b>苦手な音のメニューを1つ選んで、1週間くり返す</b>のがおすすめです。</p>
+  <p>使い方は③ワークと同じです。まず「🔊 お手本」で口の形を確かめ、次に「▶ リズムで練習」で手拍子に合わせて唱えます。最初はゆっくり正確に。言えるようになったらテンポを上げましょう。鏡で唇と舌の形を見ながら言ったり、「録音する」で聞き比べたりすると効果的です。テンポや声の設定は③と共通です。</p>
+  <p class="note">※ リズムで最後まで練習したフレーズに ✓ が付きます。メニューの全フレーズに ✓ が付くと、その日の口トレ達成です。✓ は毎日リセットされます。</p>
+  <div class="streak" id="drStreak"></div>
+  <div class="tabs" id="drTabs" role="tablist"></div>
+  <p class="level-desc" id="drDesc"></p>
+  <div class="sent-list" id="drList"></div>
+  <div class="slot" id="drSlot"></div>
 </section>
 
 </main>
@@ -516,6 +536,78 @@ const LISTEN_STAGES = [
     ids: LISTEN_EXTRA.filter((it) => it.id.startsWith('x4-')).map((it) => it.id) },
   { name: 'ステージ5', desc: '強い音6つ以上の長い文を、速めに読みます。すき間に弱い音が4〜5個詰まっています。強い音だけを追いかけましょう。', rate: 'q',
     ids: LISTEN_EXTRA.filter((it) => it.id.startsWith('x5-')).map((it) => it.id) },
+];
+
+// ⑤ 毎日の口トレ。苦手な音ごとのメニュー
+const DRILLS = [
+  {
+    id: 'vowel', name: '母音', desc: '日本語の「ア」「イ」「ウ」1つずつに当たる音が、英語では2〜3個に分かれています。口の開き方と長さの違いを、大げさなくらいに作り分けます。',
+    items: [
+      { id: 'dv-1', t: '*cat*, *cut*, *cot*.', ja: 'ネコ／切る／簡易ベッド', notes: ['cat の /æ/ は口を横に引いて、「エ」と「ア」の中間。', 'cut の /ʌ/ は口を軽く開けて、短く「ア」。', 'cot の /ɑ/ は口を縦に大きく開けて「アー」。'] },
+      { id: 'dv-2', t: '*hat*, *hut*, *hot*.', ja: 'ぼうし／小屋／熱い', notes: ['上と同じ3つの母音です。h の息を毎回しっかり出します。'] },
+      { id: 'dv-3', t: '*sheep*, *ship*.', ja: 'ヒツジ／船', notes: ['sheep の /iː/ は口を横に引いて長く。', 'ship の /ɪ/ は力を抜いて短く、少し「エ」寄りに。'] },
+      { id: 'dv-4', t: '*leave*, *live*.', ja: '去る／住む', notes: ['長い「イー」と、ゆるんだ短い「イ」。live を「リーブ」と言うと leave に聞こえます。'] },
+      { id: 'dv-5', t: '*beat*, *bit*, *bet*, *bat*.', ja: '打つ／少し／賭ける／バット', notes: ['口が少しずつ大きく開いていく並びです。あごが下がっていくのを感じましょう。'] },
+      { id: 'dv-6', t: '*fool*, *full*.', ja: 'ばか者／いっぱいの', notes: ['fool の /uː/ は唇を丸く突き出して長く。', 'full の /ʊ/ は唇の力を抜いて短く。'] },
+    ],
+  },
+  {
+    id: 'cons', name: '子音', desc: 'R と L、TH、V と F、W。どれも日本語にない口の形です。舌と唇の位置を確かめてから、ゆっくり言います。',
+    items: [
+      { id: 'dc-1', t: '*right*, *light*.', ja: '右／光', notes: ['R は舌先をどこにも付けず、少し奥へ引いて、唇を軽く丸める。', 'L は舌先を上の前歯の裏の歯ぐきに、しっかり付ける。'] },
+      { id: 'dc-2', t: '*road*, *load*, *read*, *lead*.', ja: '道／荷物／読む／導く', notes: ['R と L を交互に。舌が付く・付かないを切り替えます。'] },
+      { id: 'dc-3', t: 'cor*rect*, col*lect*.', ja: '正しい／集める', notes: ['違うのは真ん中の R と L だけ。強いのは後ろの音節です。'] },
+      { id: 'dc-4', t: '*think*, *sink*.', ja: '考える／沈む', notes: ['th は舌先を上の前歯に軽く当て、すき間から息を出す。', 's は舌を歯に付けない。'] },
+      { id: 'dc-5', t: '*three*, *tree*.', ja: '3／木', notes: ['three は th のすぐあとに r。舌を歯から奥へ引きます。'] },
+      { id: 'dc-6', t: '*this*, *these*, *those*.', ja: 'これ／これら／あれら', notes: ['声を出す th /ð/。舌先を歯に当てたまま、声をふるわせます。「ディス」にならないように。'] },
+      { id: 'dc-7', t: '*ve*ry, *ber*ry.', ja: 'とても／ベリー', notes: ['v は上の前歯を下唇に軽く乗せて、声を出す。', 'b は両唇を閉じてから、ぱっと開く。'] },
+      { id: 'dc-8', t: '*vote*, *boat*.', ja: '投票する／ボート', notes: ['v の唇と、b の唇の違いを鏡で確かめましょう。'] },
+      { id: 'dc-9', t: '*fine*, *pine*.', ja: '元気な／松', notes: ['f は上の前歯を下唇に乗せて息だけ出す。日本語の「ふ」のように両唇は使いません。'] },
+      { id: 'dc-10', t: '*would*, *wood*, *wom*an.', ja: '〜だろう／木材／女性', notes: ['w は唇を丸く突き出してから開く。前に「ウ」を足しません。', 'would と wood は同じ発音です。'] },
+    ],
+  },
+  {
+    id: 'twist', name: '早口言葉', desc: '口の筋トレです。最初はゆっくり、1音ずつ正確に。正確に言えるようになってから、テンポを上げたり「だんだん速く」を使ったりします。',
+    items: [
+      { id: 'dt-1', t: '*Red* *lor*ry, *yel*low *lor*ry.', ja: '赤いトラック、黄色いトラック', notes: ['R と L が次々に入れ替わります。lorry は L で始まって R で終わります。'] },
+      { id: 'dt-2', t: '*She* *sells* *sea*shells by the *sea*shore.', ja: '彼女は海辺で貝がらを売っている。', notes: ['she・shells・shore は sh（唇を丸めて突き出す）、sells・sea は s（唇は横）。'] },
+      { id: 'dt-3', t: '*Three* *free* *throws*.', ja: 'フリースロー3本', notes: ['th・f・th が交互に。舌と唇を素早く切り替えます。'] },
+      { id: 'dt-4', t: 'U*nique* *New* *York*.', ja: 'ユニークなニューヨーク', notes: ['unique と New York の音がよく似ているので、続けると舌がもつれます。'] },
+      { id: 'dt-5', t: '*Toy* *boat*.', ja: 'おもちゃのボート', notes: ['oy と oa の二重母音をはっきり。速くしても崩れないように。'] },
+      { id: 'dt-6', t: '*Pe*ter *Pi*per *picked* a *peck* of *pick*led *pep*pers.', ja: 'ピーター・パイパーは、酢漬けの唐辛子を1ペック摘んだ。', notes: ['p は唇を閉じて、息をためてから破裂させます。口の前に手を当てると、息が当たるのがわかります。'] },
+    ],
+  },
+  {
+    id: 'end', name: '語尾', desc: '日本語はほとんどの音が母音で終わるので、book が「ブック」、good が「グッド」になりがちです。最後の子音で止めて、母音を足さない練習です。',
+    items: [
+      { id: 'de-1', t: '*good* *job*.', ja: 'よくやった。', notes: ['good の d、job の b のあとに「オ」「ウ」を足さない。口の形だけ作って止めます。'] },
+      { id: 'de-2', t: '*big* *dog*.', ja: '大きな犬', notes: ['g は、のどの奥を閉じて止めるだけ。「ビッグ」ではなく「ビg」。'] },
+      { id: 'de-3', t: '*hot* *tea*.', ja: '熱いお茶', notes: ['hot の t は息を止めるだけ。すぐに tea へ移ります。'] },
+      { id: 'de-4', t: '*black* *cat*.', ja: '黒いネコ', notes: ['black の k と cat の t、どちらも止めるだけ。音節は2つです。'] },
+      { id: 'de-5', t: 'I *need* a *book*.', ja: '本が1冊いる。', notes: ['need a は「ニーダ」とつながります。book の k で止めます。'] },
+    ],
+  },
+  {
+    id: 'link', name: 'つなげる', desc: '子音で終わる語のあとに母音で始まる語が来ると、2つがつながって1語のように聞こえます。つなげて言えると、聞き取りも楽になります。',
+    items: [
+      { id: 'dl-1', t: '*Check* it *out*.', ja: '見てみて。', notes: ['check it は「チェキッ」、it out は「イラウ」とつながって「チェキラウ」。'] },
+      { id: 'dl-2', t: '*Not* at *all*.', ja: 'どういたしまして。／全然。', notes: ['母音にはさまれた t は、軽い「ラ」に近い音になって「ナラロー」。'] },
+      { id: 'dl-3', t: '*Pick* it *up*.', ja: '拾って。', notes: ['「ピキラップ」。up の p で止めます。'] },
+      { id: 'dl-4', t: '*Turn* it *off*.', ja: '消して。', notes: ['「ターニロフ」。turn の n が it につながります。'] },
+      { id: 'dl-5', t: '*Get* up at *eight*.', ja: '8時に起きて。', notes: ['「ゲラッパッテイト」。t が3回とも、つながって軽くなります。'] },
+      { id: 'dl-6', t: 'What do you *want* to *do*?', ja: '何をしたい？', notes: ['What do you は「ワダヤ」、want to は「ワナ」。'] },
+    ],
+  },
+  {
+    id: 'rhythm', name: 'リズム', desc: '弱い音が1つずつ増えていくはしごです。どの文も手拍子は3回のまま。弱い音が増えても、手拍子の間隔を変えずに言えたら合格です。',
+    items: [
+      { id: 'dr-1', t: '*Kids* *play* *games*.', ja: '子どもたちはゲームをする。', notes: ['弱い音ゼロ。3つの手拍子にぴったり合わせます。'] },
+      { id: 'dr-2', t: 'The *kids* *play* the *games*.', ja: 'その子どもたちは、そのゲームをする。', notes: ['the は手拍子の直前に、すべりこませます。'] },
+      { id: 'dr-3', t: 'The *kids* will *play* the *games*.', ja: 'その子どもたちは、そのゲームをするだろう。', notes: ['will は「ウル」くらいに弱く。'] },
+      { id: 'dr-4', t: 'The *kids* have been *play*ing the *games*.', ja: 'その子どもたちは、ずっとそのゲームをしている。', notes: ['have been は「アビン」。2つの弱い音を1拍のすき間に。'] },
+      { id: 'dr-5', t: 'The *kids* should have been *play*ing the *games*.', ja: 'その子どもたちは、そのゲームをしているはずだった。', notes: ['should have been は「シュダビン」。弱い音が3つでも、手拍子の間隔は同じです。'] },
+    ],
+  },
 ];
 
 const DEMO_JA ='*ね* *こ* *が* *ね* *ず* *み* *を* *お* *う*';
@@ -960,10 +1052,10 @@ function loadStore() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const v = raw ? JSON.parse(raw) : {};
-    return { best: v.best || {}, settings: v.settings || {}, listen: v.listen || {} };
+    return { best: v.best || {}, settings: v.settings || {}, listen: v.listen || {}, drill: v.drill || {} };
   } catch (e) {
     console.warn('保存データを読めませんでした:', e);
-    return { best: {}, settings: {}, listen: {} };
+    return { best: {}, settings: {}, listen: {}, drill: {} };
   }
 }
 let store = loadStore();
@@ -1141,6 +1233,9 @@ function renderList() {
 
 function renderPlayer() {
   const it = work.item;
+  // 練習の画面は1つだけ。③と⑤のどちらの文を選んだかで置き場所を移す
+  const slot = $(DRILL_IDS.has(it.id) ? 'drSlot' : 'workSlot');
+  if ($('player').parentNode !== slot) slot.appendChild($('player'));
   work.lane = mountLane($('laneWork'), parseSentence(it.t));
   $('workJa').textContent = it.ja;
   $('workNotes').replaceChildren(...(it.notes || []).map((n) => {
@@ -1158,6 +1253,7 @@ function renderWork() {
   $('levelDesc').textContent = work.level.desc;
   renderList();
   renderPlayer();
+  renderDrill();
 }
 
 async function startRecording() {
@@ -1264,8 +1360,10 @@ function setupWork() {
             saveStore();
           }
           $('workBest').textContent = bestText(it.id);
+          markDrillDone(it.id);
           renderTabs();
           renderList();
+          renderDrill();
         } else {
           status.textContent = '';
         }
@@ -1446,6 +1544,80 @@ setupDemo('ladder', LADDER, 'playLadder', 'statusLadder', {
   labels: ['弱い音 0', '弱い音 2（the ×2）', '弱い音 3（the, will, the）', '弱い音 5（the, have, been, chas-ing の ing, the）'],
   fmt: { count: () => '', cycle: (e) => `${e.cycle + 1} つ目の文` },
 });
+// ===== ⑤ 毎日の口トレ =====
+const DRILL_IDS = new Set(DRILLS.flatMap((m) => m.items.map((it) => it.id)));
+const drill = { menu: DRILLS[0] };
+
+function dayKey(offset = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// store.drill = { day, done: [今日リズムで最後まで練習したid], streak, last: 最後に達成した日 }
+function drillState() {
+  const s = store.drill;
+  const today = dayKey();
+  return {
+    done: new Set(s.day === today ? s.done || [] : []),
+    streak: s.last === today || s.last === dayKey(-1) ? s.streak || 0 : 0,
+    countedToday: s.last === today,
+  };
+}
+
+const menuDone = (m, done) => m.items.every((it) => done.has(it.id));
+
+function markDrillDone(id) {
+  if (!DRILL_IDS.has(id)) return;
+  const st = drillState();
+  const today = dayKey();
+  st.done.add(id);
+  const achieved = !st.countedToday && DRILLS.some((m) => menuDone(m, st.done));
+  store.drill = {
+    day: today,
+    done: [...st.done],
+    streak: achieved ? st.streak + 1 : st.streak,
+    last: achieved ? today : store.drill.last,
+  };
+  saveStore();
+}
+
+function renderDrill() {
+  const st = drillState();
+  const cleared = DRILLS.filter((m) => menuDone(m, st.done)).length;
+  const big = document.createElement('span');
+  big.append('🔥 連続 ', Object.assign(document.createElement('b'), { textContent: String(st.streak) }), ' 日');
+  const sub = Object.assign(document.createElement('span'), {
+    className: 'sub',
+    textContent: cleared ? `今日の達成メニュー ${cleared} / ${DRILLS.length}` : '今日はまだ達成していません',
+  });
+  $('drStreak').replaceChildren(big, sub);
+
+  $('drTabs').replaceChildren(...DRILLS.map((m) => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (m === drill.menu ? ' on' : '');
+    b.setAttribute('role', 'tab');
+    b.textContent = m.name + (menuDone(m, st.done) ? ' ✓' : '');
+    b.addEventListener('click', () => { drill.menu = m; renderDrill(); });
+    return b;
+  }));
+  $('drDesc').textContent = drill.menu.desc;
+  $('drList').replaceChildren(...drill.menu.items.map((it) => {
+    const parsed = parseSentence(it.t);
+    const b = document.createElement('button');
+    b.className = 'sent' + (it === work.item ? ' on' : '');
+    b.innerHTML = `<span class="tick">${st.done.has(it.id) ? '✓' : ''}</span><span class="en">${sentenceHTML(parsed)}</span><span class="meta">${parsed.beats.length}拍</span>`;
+    b.addEventListener('click', () => {
+      stopAll();
+      work.item = it;
+      renderPlayer();
+      renderList();
+      renderDrill();
+    });
+    return b;
+  }));
+}
+
 setupQuiz();
 setupWork();
 setupListen();
