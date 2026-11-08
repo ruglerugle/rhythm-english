@@ -1098,11 +1098,30 @@ function loadStore() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     const v = raw ? JSON.parse(raw) : {};
-    return { best: v.best || {}, settings: v.settings || {}, listen: v.listen || {}, drill: v.drill || {}, minimal: v.minimal || {} };
+    return migrateStore({ best: v.best || {}, drillBest: v.drillBest || {}, settings: v.settings || {}, listen: v.listen || {}, drill: v.drill || {}, minimal: v.minimal || {} });
   } catch (e) {
     console.warn('保存データを読めませんでした:', e);
-    return { best: {}, settings: {}, listen: {}, drill: {}, minimal: {} };
+    return { best: {}, drillBest: {}, settings: {}, listen: {}, drill: {}, minimal: {} };
   }
+}
+// 古い形の記録を直す（学習記録で別の端末から古い形が戻ってきても、読むたびに直す）
+// - 口トレの文の記録は best ではなく drillBest に入れる（best は③の38文だけ。学習記録はこの数を数える）
+// - 口トレの「今日やった文」は day/done の1組ではなく、日ごとの days に入れる（端末間で足し合わせても日がまざらない）
+function migrateStore(st) {
+  const drillIds = new Set(DRILLS.flatMap((m) => m.items.map((it) => it.id)));
+  const best = {};
+  for (const [id, bpm] of Object.entries(st.best)) {
+    if (drillIds.has(id)) st.drillBest[id] = Math.max(st.drillBest[id] || 0, bpm);
+    else best[id] = bpm;
+  }
+  st.best = best;
+  const d = st.drill;
+  if (!d.days) {
+    d.days = d.day && Array.isArray(d.done) ? { [d.day]: d.done } : {};
+  }
+  delete d.day;
+  delete d.done;
+  return st;
 }
 let store = loadStore();
 function saveStore() {
@@ -1223,7 +1242,7 @@ const work = {
 const $ = (id) => document.getElementById(id);
 
 function bestText(id) {
-  const b = store.best[id];
+  const b = (DRILL_IDS.has(id) ? store.drillBest : store.best)[id];
   return b ? `✓ 最後まで練習した最高テンポ：${b}` : 'まだ練習していません';
 }
 
@@ -1401,8 +1420,9 @@ function setupWork() {
         const finalBpm = bpm + ramp * (cycles - 1);
         if (completed) {
           status.textContent = ramp ? `おつかれさま！ 最後はテンポ ${finalBpm}` : 'おつかれさま！';
-          if (!store.best[it.id] || finalBpm > store.best[it.id]) {
-            store.best[it.id] = finalBpm;
+          const rec = DRILL_IDS.has(it.id) ? store.drillBest : store.best;
+          if (!rec[it.id] || finalBpm > rec[it.id]) {
+            rec[it.id] = finalBpm;
             saveStore();
           }
           $('workBest').textContent = bestText(it.id);
@@ -1600,12 +1620,12 @@ function dayKey(offset = 0) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-// store.drill = { day, done: [今日リズムで最後まで練習したid], streak, last: 最後に達成した日 }
+// store.drill = { days: { 日付: [その日リズムで最後まで練習したid] }, streak, last: 最後に達成した日 }
 function drillState() {
   const s = store.drill;
   const today = dayKey();
   return {
-    done: new Set(s.day === today ? s.done || [] : []),
+    done: new Set(s.days?.[today] || []),
     streak: s.last === today || s.last === dayKey(-1) ? s.streak || 0 : 0,
     countedToday: s.last === today,
   };
@@ -1619,9 +1639,12 @@ function markDrillDone(id) {
   const today = dayKey();
   st.done.add(id);
   const achieved = !st.countedToday && DRILLS.some((m) => menuDone(m, st.done));
+  // 今日と昨日の分だけ残す（ほかの端末から古い日が戻ってきても表示には使わない）
+  const keep = new Set([today, dayKey(-1)]);
+  const days = Object.fromEntries(Object.entries(store.drill.days || {}).filter(([d]) => keep.has(d)));
+  days[today] = [...st.done];
   store.drill = {
-    day: today,
-    done: [...st.done],
+    days,
     streak: achieved ? st.streak + 1 : st.streak,
     last: achieved ? today : store.drill.last,
   };
