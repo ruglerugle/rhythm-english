@@ -407,6 +407,87 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 .choice:hover { box-shadow: 0 0 0 2px var(--accent) inset; }
 .ob-step { color: var(--accent); font-size: .82rem; font-weight: 700; }
 
+/* ---- 有料版・アカウント（billing.js） ---- */
+.btn-col { display: grid; gap: 10px; margin: 6px 0 4px; }
+.btn-col .btn { width: 100%; }
+.link { font: inherit; border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.pay-hero { margin: -22px -20px 16px; padding: 18px 20px 20px; color: #fff; border-radius: 24px 24px 0 0; background: radial-gradient(120% 140% at 100% 0%, #5c7cf0 0%, #2f55d4 45%, #16255f 100%); }
+.pay-hero h2 { margin: 6px 0 4px; font-size: 1.35rem; }
+.pay-hero p { margin: 0; opacity: .92; font-size: .92rem; }
+.pay-hero .crown { font-size: 1.8rem; }
+.pay-hero .btn.icon { background: rgba(255, 255, 255, .18); color: #fff; box-shadow: none; }
+.benefits { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 12px; }
+.benefits li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; }
+.benefits li::before { content: "✓"; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #dcfce7; color: var(--ok); font-weight: 800; }
+.benefits b { display: block; }
+.benefits small { color: var(--muted); font-size: .84rem; }
+.price-card { border-radius: 18px; padding: 14px 18px; box-shadow: 0 0 0 2px var(--accent) inset; background: var(--accent-soft); display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.price-card b { font-size: 1.9rem; white-space: nowrap; color: var(--accent-dark); }
+.price-card b span { font-size: 1rem; margin-left: 2px; }
+.price-card small { color: var(--muted); font-size: .82rem; line-height: 1.5; }
+.trust { display: grid; gap: 4px; margin-top: 12px; font-size: .78rem; color: var(--muted); text-align: center; }
+.trust a { color: var(--muted); }
+.acct-input { width: 100%; font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); margin-bottom: 4px; box-sizing: border-box; }
+.acct-code { font-family: ui-monospace, Consolas, monospace; font-size: 1.15rem; font-weight: 700; letter-spacing: .04em; background: var(--accent-soft); padding: 12px; border-radius: 12px; text-align: center; }
+.acct-error { color: var(--ng); font-size: .9rem; }
+.plan-box { margin-top: 18px; padding-top: 14px; border-top: 2px solid var(--line); }
+.plan-box h3 { margin: 0 0 4px; font-size: 1rem; }
+.plan-legal a { color: var(--muted); }
+.toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 50; max-width: min(92vw, 520px); padding: 12px 18px; border-radius: 14px; background: var(--ink); color: #fff; font-size: .92rem; box-shadow: var(--shadow); }
+/* 採点 */
+.player .score-hint { text-align: center; color: var(--play-muted); font-size: .82rem; margin: 4px auto 0; max-width: 640px; }
+.sc-card { margin: 14px auto 6px; max-width: 760px; background: var(--play-panel); border-radius: 18px; padding: 16px; color: var(--play-ink); text-align: left; }
+.sc-top { display: flex; align-items: center; gap: 16px; }
+.sc-total { display: flex; align-items: baseline; gap: 2px; }
+.sc-total b { font-size: 3rem; font-weight: 900; line-height: 1; }
+.sc-total.good b { color: #4ade80; }
+.sc-total.mid b { color: var(--gold); }
+.sc-total.bad b { color: #ff8b8b; }
+.sc-sub { color: var(--play-muted); font-size: .86rem; display: grid; gap: 2px; }
+.sc-meters { display: grid; gap: 8px; margin: 14px 0 10px; }
+.sc-meter { display: grid; grid-template-columns: 4.2em 1fr 2.4em; align-items: center; gap: 4px 10px; }
+.sc-meter .nm { font-weight: 700; font-size: .9rem; }
+.sc-meter .bar { background: var(--play-line); }
+.sc-meter .bar i.good { background: #4ade80; }
+.sc-meter .bar i.mid { background: var(--gold); }
+.sc-meter .bar i.bad { background: #ff8b8b; }
+.sc-meter .v { text-align: right; font-weight: 800; }
+.sc-meter .sub { grid-column: 2 / 4; color: var(--play-muted); font-size: .76rem; margin-top: -4px; }
+.sc-words { font-size: 1.15rem; line-height: 1.9; margin: 8px 0; }
+.sc-words .w { padding: 1px 3px; border-radius: 6px; font-size: inherit; }
+.sc-words .w.st { font-weight: 800; }
+.sc-words .w.good { color: #8ef0b0; }
+.sc-words .w.mid { color: var(--gold); background: rgba(255, 176, 32, .12); }
+.sc-words .w.bad { color: #ffb0b0; background: rgba(255, 90, 90, .18); text-decoration: underline wavy; }
+.sc-words .w.miss { color: var(--play-muted); text-decoration: line-through; }
+.sc-chart { margin: 10px 0; }
+.sc-label, .sc-note { color: var(--play-muted); font-size: .78rem; margin: 0 0 4px; }
+.sc-note { margin: 4px 0 0; }
+.sc-track { position: relative; height: 34px; background: #121a3d; border-radius: 10px; overflow: hidden; }
+.sc-track .blk { position: absolute; bottom: 4px; height: 12px; border-radius: 4px; background: #6b7499; color: transparent; font-size: .62rem; overflow: hidden; white-space: nowrap; }
+.sc-track .blk.st { height: 26px; background: #ff8b61; color: #2a0f00; font-weight: 800; line-height: 26px; padding-left: 3px; box-sizing: border-box; }
+.sc-tips { margin: 10px 0; padding: 10px 14px 10px 2em; background: #121a3d; border-radius: 12px; font-size: .9rem; display: grid; gap: 6px; }
+.sc-tips b { color: var(--gold); margin-right: 6px; }
+.sc-rec { display: grid; gap: 4px; justify-items: center; margin-top: 8px; }
+.sc-rec .note { color: var(--play-muted); }
+.sc-rec audio { width: 100%; max-width: 420px; }
+.score-rec { margin: 0 0 14px; }
+.score-rec h3 { margin: 0 0 6px; }
+.sc-days { display: flex; align-items: flex-end; gap: 4px; height: 90px; margin: 8px 0 4px; }
+.sc-days .d { flex: 1; max-width: 34px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; }
+.sc-days .d i { width: 100%; border-radius: 6px 6px 2px 2px; background: var(--accent); }
+.sc-days .d i.good { background: var(--ok); }
+.sc-days .d i.mid { background: var(--gold); }
+.sc-days .d i.bad { background: var(--ng); }
+.sc-days .d span { font-size: .66rem; color: var(--muted); }
+.sc-row { display: grid; grid-template-columns: 1fr auto 4.5em; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: .9rem; }
+.sc-row .en { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.sc-row b { font-weight: 800; }
+.sc-row b.good { color: var(--ok); }
+.sc-row b.mid { color: var(--gold-dark); }
+.sc-row b.bad { color: var(--ng); }
+.sc-row small { color: var(--muted); text-align: right; }
+
 @media (max-width: 560px) {
   .card { padding: 16px 14px; }
   .col { padding: 22px 2px 8px 4px; column-gap: 3px; }
@@ -650,7 +731,7 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 <!-- ===== 記録 ===== -->
 <div class="view" id="recordsView"><div class="page">
   <h1>記録</h1>
-  <p class="lead">練習の記録は、この端末のブラウザの中だけに保存されます。</p>
+  <p class="lead">練習の記録は、この端末のブラウザの中だけに保存されます（声の採点の記録だけはアカウントに残ります）。</p>
   <div id="recordsBody"></div>
 </div></div>
 </main>
@@ -1555,6 +1636,7 @@ function renderPlayer() {
   $('workBest').textContent = bestText(it.id);
   $('workStatus').textContent = '';
   $('recBox').replaceChildren();
+  $('scoreBox')?.replaceChildren();
 }
 
 function renderWork() {
@@ -2247,6 +2329,8 @@ function renderRecords() {
     el('div', { className: 'card' }, ...calendar()),
     el('div', { className: 'section-title' }, el('h2', { textContent: '練習ごとの記録' })),
   ];
+  // 声の採点（billing.js。採点の記録はアカウントに残る）
+  if (typeof scoreRecordCard === 'function') kids.push(scoreRecordCard());
   kids.push(recCard('👏 リズム練習', ...LEVELS.map((lv) => {
     const ids = lv.items.map((it) => it.id).filter((id) => store.best[id]);
     const top = ids.length ? Math.max(...ids.map((id) => store.best[id])) : 0;
@@ -2419,5 +2503,6 @@ renderMinimal();
 setupListen();
 setupUI();
 </script>
+<script src="billing.js?v=3"></script>
 </body>
 </html>
