@@ -90,11 +90,6 @@ p { margin: 8px 0; }
 .brand b { font-size: 1.1rem; letter-spacing: .04em; white-space: nowrap; }
 .brand small { display: block; font-size: .7rem; color: var(--muted); font-weight: 500; line-height: 1.2; }
 .topbar .sp { flex: 1; }
-.streak-chip {
-  font-weight: 700; font-size: .85rem; padding: 5px 12px; border-radius: 999px; white-space: nowrap;
-  background: var(--paper); color: var(--muted); box-shadow: 0 0 0 1px var(--line) inset;
-}
-.streak-chip.hot { background: #fff4dc; color: #a35b00; box-shadow: 0 0 0 1px #ffd892 inset; }
 .navtabs { display: flex; }
 .navtabs button {
   font: inherit; cursor: pointer; border: 0; background: none; color: var(--muted); border-radius: 14px; padding: 6px 10px;
@@ -524,12 +519,11 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 <body data-view="home" data-mode="rhythm">
 <header class="topbar">
   <a class="brand" href="#home" id="brandLink">
-    <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#2f55d4"/><circle cx="10" cy="22" r="5" fill="#fff"/><circle cx="20" cy="22" r="2.2" fill="#9fb2ef"/><circle cx="30" cy="22" r="5" fill="#ffb020"/><path d="M8 11h24" stroke="#9fb2ef" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="1 9.5"/></svg>
-    <span><b>英語リズム</b><small>強い音だけを手拍子に乗せる</small></span>
+    <svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5c7cf0"/><stop offset="1" stop-color="#1f3c9e"/></linearGradient></defs><rect width="40" height="40" rx="12" fill="url(#lg)"/><circle cx="10" cy="22" r="5" fill="#fff"/><circle cx="20" cy="22" r="2.2" fill="#9fb2ef"/><circle cx="30" cy="22" r="5" fill="#ffb020"/><path d="M8 11h24" stroke="#9fb2ef" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="1 9.5"/></svg>
+    <span><b>英語リズム</b><small>羽ばたき塾</small></span>
   </a>
   <span class="sp"></span>
-  <span class="streak-chip" id="topStreak" title="続けて練習した日数">🔥 0日</span>
-  <button class="btn icon" id="settingsBtn" aria-label="設定">⚙</button>
+  <button class="btn icon" id="settingsBtn" aria-label="設定"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
 </header>
 
 <nav class="navtabs" aria-label="画面の切り替え">
@@ -769,9 +763,9 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 <!-- ===== 練習中の画面（暗い全画面） ===== -->
 <div class="focus" id="focus" hidden>
   <div class="focus-bar">
-    <button class="btn dark icon" id="focusClose" aria-label="一覧へもどる">←</button>
+    <button class="btn dark icon" id="focusClose" aria-label="一覧へもどる"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
     <span class="title" id="focusTitle"></span>
-    <button class="btn dark icon" id="focusSettings" aria-label="設定">⚙</button>
+    <button class="btn dark icon" id="focusSettings" aria-label="設定"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
   <div class="player" id="player">
     <div class="lane-wrap"><div id="laneWork"></div></div>
@@ -800,7 +794,7 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 <!-- ===== 設定 ===== -->
 <dialog id="settingsDlg">
   <div class="dlg">
-    <div class="dlg-head"><h2>⚙ 設定</h2><button class="btn icon" id="settingsClose" aria-label="閉じる">✕</button></div>
+    <div class="dlg-head"><h2>設定</h2><button class="btn icon" id="settingsClose" aria-label="閉じる">✕</button></div>
     <label class="ctl">くり返し
       <span><select id="cycles"><option>2</option><option selected>4</option><option>6</option><option>8</option></select> 回</span></label>
     <label class="ctl">鳴らす音
@@ -2288,7 +2282,9 @@ function minimalTotal() {
 
 function renderHome() {
   const h = new Date().getHours();
-  $('helloSub').textContent = h < 11 ? 'おはようございます' : h < 18 ? 'こんにちは' : 'こんばんは';
+  const streak = overallStreak();
+  $('helloSub').textContent = (h < 11 ? 'おはようございます' : h < 18 ? 'こんにちは' : 'こんばんは')
+    + (streak > 0 ? `　${streak}日連続で練習中` : '');
   const p = profile();
   const plan = todayPlan();
   const frac = plan.reduce((a, it) => a + Math.min(it.have / it.need, 1), 0) / plan.length;
@@ -2393,12 +2389,8 @@ function renderRecords() {
   $('recordsBody').replaceChildren(...kids);
 }
 
-// 上のバーの連続日数と、開いている画面を新しくする
+// 開いている画面を新しくする
 function refreshStatus() {
-  const n = overallStreak();
-  const chip = $('topStreak');
-  chip.textContent = `🔥 ${n}日`;
-  chip.classList.toggle('hot', !!dayTotal(dayKey()));
   const v = document.body.dataset.view;
   if (v === 'home') renderHome();
   if (v === 'records') renderRecords();
