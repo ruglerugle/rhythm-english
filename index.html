@@ -161,6 +161,24 @@ footer a { color: var(--muted); }
 .menu-item .btn, .menu-item .btn-primary { padding: 7px 14px; font-size: .88rem; flex: none; }
 .first-card { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 14px; background: linear-gradient(135deg, #2f55d4, #5b3fd0); color: #fff; }
 .first-card p { margin: 0; flex: 1; min-width: 220px; }
+/* キャラクター（img/chara/*.svg、design/gen_chara.py で描く） */
+.chara { display: block; height: auto; user-select: none; pointer-events: none; }
+.hello { display: flex; align-items: flex-end; gap: 12px; }
+.hello > div { flex: 1; min-width: 0; }
+.hello .chara { width: 68px; margin-bottom: 10px; filter: drop-shadow(0 6px 10px rgba(22, 28, 51, .15)); }
+@media (max-width: 520px) { .hello .chara { width: 54px; } }
+.first-card .chara { width: 50px; flex: none; }
+.chara-result { width: 52px; margin: 0 auto 4px; }
+.premium {
+  margin-top: 28px; border-radius: 24px; padding: 22px 24px; color: #fff; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center;
+  background: radial-gradient(120% 140% at 100% 0%, #5c7cf0 0%, #2f55d4 45%, #16255f 100%); box-shadow: var(--shadow);
+}
+.premium[hidden] { display: none; }
+.premium div { flex: 1 1 260px; }
+.premium h2 { margin: 0 0 4px; font-size: 1.25rem; }
+.premium h2 em { font-style: normal; color: var(--gold); }
+.premium p { margin: 0; opacity: .88; font-size: .92rem; }
+.premium .chara { width: 48px; flex: none; }
 .mode-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .mode-card {
   text-align: left; font: inherit; cursor: pointer; border: 0; color: var(--ink); background: var(--paper);
@@ -414,7 +432,7 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 .pay-hero { margin: -22px -20px 16px; padding: 18px 20px 20px; color: #fff; border-radius: 24px 24px 0 0; background: radial-gradient(120% 140% at 100% 0%, #5c7cf0 0%, #2f55d4 45%, #16255f 100%); }
 .pay-hero h2 { margin: 6px 0 4px; font-size: 1.35rem; }
 .pay-hero p { margin: 0; opacity: .92; font-size: .92rem; }
-.pay-hero .crown { font-size: 1.8rem; }
+.pay-hero .pay-chara { width: 52px; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .3)); }
 .pay-hero .btn.icon { background: rgba(255, 255, 255, .18); color: #fff; box-shadow: none; }
 .benefits { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 12px; }
 .benefits li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; }
@@ -438,6 +456,9 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 .player .score-hint { text-align: center; color: var(--play-muted); font-size: .82rem; margin: 4px auto 0; max-width: 640px; }
 .sc-card { margin: 14px auto 6px; max-width: 760px; background: var(--play-panel); border-radius: 18px; padding: 16px; color: var(--play-ink); text-align: left; }
 .sc-top { display: flex; align-items: center; gap: 16px; }
+.sc-top .sc-chara { width: 56px; flex: none; }
+.sc-err { max-width: 760px; margin: 14px auto 6px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, .06); font-weight: 700; }
+.sc-err .chara { width: 48px; flex: none; }
 .sc-total { display: flex; align-items: baseline; gap: 2px; }
 .sc-total b { font-size: 3rem; font-weight: 900; line-height: 1; }
 .sc-total.good b { color: #4ade80; }
@@ -522,8 +543,11 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 <!-- ===== ホーム ===== -->
 <div class="view" id="homeView"><div class="page">
   <div class="hello">
-    <p class="hello-sub" id="helloSub"></p>
-    <h1 id="helloTitle">今日も英語のリズムを</h1>
+    <div>
+      <p class="hello-sub" id="helloSub"></p>
+      <h1 id="helloTitle">今日も英語のリズムを</h1>
+    </div>
+    <img class="chara" id="helloChara" src="img/chara/hello.svg?v=1" alt="" width="68" height="63">
   </div>
   <div class="card today">
     <div class="ring" id="todayRing">
@@ -538,6 +562,11 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
   <div id="firstCard"></div>
   <div class="section-title"><h2>練習をえらぶ</h2><span>好きなものから、いくつでも</span></div>
   <div class="mode-grid" id="modeGrid"></div>
+  <div id="premiumBanner" class="premium" hidden>
+    <img class="chara" src="img/chara/crown.svg?v=1" alt="" width="48" height="44">
+    <div><h2>あなたの英語を、<em>毎回採点</em>。</h2><p>有料版なら、手拍子に合わせて1回言うだけで、発音・リズム・抑揚を点数にして、直すところを日本語で示します。</p></div>
+    <button type="button" class="btn gold" data-premium>有料版について</button>
+  </div>
 </div></div>
 
 <!-- ===== しくみ ===== -->
@@ -694,6 +723,7 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
         </div>
       </div>
       <div class="ls-clear" id="lsClear" hidden>
+        <img class="chara chara-result" src="img/chara/celebrate.svg?v=1" alt="" width="52" height="48">
         <div class="ls-clear-title" id="lsClearTitle"></div>
         <div class="btn-row">
           <button class="btn-primary" id="lsNextStage">次のステージへ →</button>
@@ -2018,6 +2048,10 @@ const mpAudio = new Audio();
 const setKey = (set) => set.join('/');
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+// キャラクター（メトロノームの子。img/chara/*.svg は design/gen_chara.py で描く）
+const charaSrc = (name) => `img/chara/${name}.svg?v=1`;
+const charaImg = (name, cls = '') => el('img', { className: `chara ${cls}`.trim(), src: charaSrc(name), alt: '', width: 60, height: 55 });
+
 function el(tag, props = {}, ...kids) {
   const e = Object.assign(document.createElement(tag), props);
   e.append(...kids);
@@ -2082,7 +2116,9 @@ function renderMinimal() {
     const finished = mp.n >= MINIMAL_ROUND;
     const btn = el('button', { className: 'btn-primary', textContent: finished ? 'もう一度挑戦' : `▶ スタート（${MINIMAL_ROUND}問）` });
     btn.addEventListener('click', startRound);
-    const head = finished ? [el('div', { className: 'mp-result', textContent: `${mp.ok} / ${MINIMAL_ROUND} 問正解` })] : [];
+    const head = finished ? [
+      charaImg(mp.ok === MINIMAL_ROUND ? 'celebrate' : mp.ok >= MINIMAL_ROUND * 0.7 ? 'happy' : 'cheer', 'chara-result'),
+      el('div', { className: 'mp-result', textContent: `${mp.ok} / ${MINIMAL_ROUND} 問正解` })] : [];
     if (finished && mp.misses.length) head.push(el('div', { className: 'note', textContent: `まちがえた単語：${mp.misses.join('、')}` }));
     box.replaceChildren(...head, ...weakList(st), centerRow(btn));
     return;
@@ -2257,6 +2293,7 @@ function renderHome() {
   const plan = todayPlan();
   const frac = plan.reduce((a, it) => a + Math.min(it.have / it.need, 1), 0) / plan.length;
   $('helloTitle').textContent = frac >= 1 ? '今日のメニュー達成！ 🎉' : `今日も${p.minutes}分、英語のリズムを`;
+  $('helloChara').src = charaSrc(frac >= 1 ? 'celebrate' : frac > 0 ? 'cheer' : 'hello');
   $('todayMin').textContent = `約${p.minutes}分`;
   setRing(frac);
   $('todayList').replaceChildren(...plan.map((it, i) => {
@@ -2275,7 +2312,7 @@ function renderHome() {
   if (p.level === 'new' && !store.seenLearn) {
     const b = el('button', { className: 'btn gold', textContent: '「しくみ」を読む →' });
     b.addEventListener('click', () => showView('learn'));
-    first.replaceChildren(el('div', { className: 'card first-card' },
+    first.replaceChildren(el('div', { className: 'card first-card' }, charaImg('guide'),
       el('p', {}, el('b', { textContent: 'はじめての方へ：' }), 'まず「しくみ」で、英語が速く聞こえる理由を読んでみましょう（約5分）。練習の効き目がぐっと上がります。'), b));
   } else {
     first.replaceChildren();
@@ -2445,6 +2482,7 @@ function openOnboarding() {
   const step = (i) => {
     const s = OB_STEPS[i];
     $('obBody').replaceChildren(
+      charaImg(i === 0 ? 'hello' : 'guide', 'chara-result'),
       el('div', { className: 'ob-step', textContent: `はじめに 3つだけ教えてください（${i + 1} / ${OB_STEPS.length}）` }),
       el('h2', { textContent: s.q }),
       el('div', { className: 'choice-grid' }, ...s.opts.map((o) => {
@@ -2503,7 +2541,7 @@ renderMinimal();
 setupListen();
 setupUI();
 </script>
-<script src="billing.js?v=3"></script>
+<script src="billing.js?v=4"></script>
 <script src="https://feedback.habatakijuku.com/feedback.js" defer></script>
 </body>
 </html>

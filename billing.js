@@ -86,7 +86,7 @@ function mountBillingUI() {
 <dialog id="payDlg">
   <div class="dlg">
     <div class="pay-hero">
-      <div class="dlg-head"><span class="crown" aria-hidden="true">🎯</span><span style="flex:1"></span><button class="btn icon" data-close aria-label="閉じる">✕</button></div>
+      <div class="dlg-head"><img class="chara pay-chara" src="img/chara/crown.svg?v=1" alt="" width="52" height="48"><span style="flex:1"></span><button class="btn icon" data-close aria-label="閉じる">✕</button></div>
       <h2>英語リズム・トレーニング 有料版</h2>
       <p id="payLead">あなたの英語を、耳のいいコーチが毎回採点。</p>
     </div>
@@ -195,6 +195,8 @@ function renderPlan() {
     status = `有料版（${PRICE_LABEL}）にすると、声の自動採点（発音・リズム・抑揚）を使えます。無料のアカウントを作ると、3回までためせます。`;
     btns = btn('buy', `有料版にする（${PRICE_LABEL}）`, 'btn gold') + btn('trial', '無料で3回ためす') + btn('login', 'ログイン');
   }
+  const banner = $('premiumBanner');
+  if (banner) banner.hidden = account.paid;
   $('planStatus').textContent = status;
   $('planBtns').innerHTML = btns;
   renderScoreHint();
@@ -452,7 +454,8 @@ async function runScore() {
         box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         logAct('score');
       } catch (e) {
-        status.textContent = e.message;
+        status.textContent = '';
+        box.replaceChildren(el('div', { className: 'sc-err' }, charaImg('worried'), el('span', { textContent: e.message })));
         if (/お試し/.test(e.message)) openPaywall('お試しの3回を使い切りました。続けて採点するには有料版をどうぞ。');
       } finally {
         finish();
@@ -507,6 +510,7 @@ function scoreCard(r, blob) {
   const audio = el('audio', { controls: true, src: URL.createObjectURL(blob) });
   return el('div', { className: 'sc-card' },
     el('div', { className: 'sc-top' },
+      charaImg(r.total >= 85 ? 'celebrate' : r.total >= 60 ? 'happy' : 'cheer', 'sc-chara'),
       el('div', { className: 'sc-total ' + grade(r.total) }, el('b', { textContent: String(r.total) }), el('small', { textContent: '点' })),
       el('div', { className: 'sc-sub' },
         el('div', { textContent: r.total >= r.best && r.best > 0 ? '🏆 この文の自己ベスト！' : `この文の最高 ${r.best}点` }),
@@ -563,6 +567,7 @@ function initBilling() {
   if (!BILLING_ON) return;
   mountBillingUI();
   $('scoreBtn').addEventListener('click', runScore);
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-premium]')) openPaywall(); });
   $('planBtns').addEventListener('click', (e) => {
     const b = e.target instanceof Element ? e.target.closest('button[data-plan]') : null;
     if (b) onPlanButton(b.dataset.plan);
