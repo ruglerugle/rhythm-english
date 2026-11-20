@@ -7,6 +7,8 @@
 #       ・「@claude」を含む
 #       ・「次担当Claude」「次担当 **Claude**」などを含む（Codex からの引き継ぎ）
 #   - クラウドの Codex（chatgpt-codex-connector[bot]）の PR レビュー（指摘）
+#   - クラウドの Codex のレビュー状況のまとめが「完了・未解決の指摘なし」になったとき（claude/ ブランチの PR だけ）。
+#     Claude が最終確認し、テストに通ればマージして本番に出す（2026-11-21 オーナー決定）。
 #   「Claude Code」で始まるコメント（Claude 自身の報告）と、fork からの PR では起動しない。
 #
 # 止め方
@@ -17,14 +19,14 @@
 # 実行中は `claude-running` ラベルが付く（手元の定期チェックは、これが付いたものに手を出さない）。
 #
 # 必要な設定（オーナー）
-#   - Secret CODEX_TRIGGER_TOKEN（オーナーの fine-grained トークン。PR へのコメントだけに使う。なければ Codex への依頼を飛ばす）
+#   - Secret CODEX_TRIGGER_TOKEN（オーナーの fine-grained トークン。Codex への依頼コメントだけに使う。なければ依頼を飛ばす）
 #   - Claude の GitHub アプリ（https://github.com/apps/claude）をこのリポジトリに入れる
 #   - Secret CLAUDE_CODE_OAUTH_TOKEN（`claude setup-token` で作る）
 name: Claude agent loop
 
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
   pull_request_review:
     types: [submitted]
 
@@ -62,6 +64,7 @@ jobs:
             number=$(jq -r '.issue.number' "$ev")
             is_pr=$(jq -r 'if .issue.pull_request then "true" else "false" end' "$ev")
             login=$(jq -r '.comment.user.login' "$ev")
+            action=$(jq -r '.action' "$ev")
             body=$(jq -r '.comment.body // ""' "$ev")
           else
             number=$(jq -r '.pull_request.number' "$ev")
@@ -74,9 +77,23 @@ jobs:
 
           source=""
           if [ "$login" = "$codex" ]; then
-            # Codex の指摘は PR レビューとして届く。ボットの普通のコメント（実行状況のまとめ・設定の案内）では起動しない
-            [ "$GITHUB_EVENT_NAME" = "pull_request_review" ] && source="codex-cloud"
-          elif [ "$login" = "$OWNER" ]; then
+            if [ "$GITHUB_EVENT_NAME" = "pull_request_review" ]; then
+              # Codex の指摘は PR レビューとして届く
+              source="codex-cloud"
+            elif [ "$is_pr" = "true" ]; then
+              # レビュー状況のまとめ（作成・更新）。完了・未解決の指摘なし・PR の先頭と同じコミットなら、最終確認の合図
+              st=$(printf '%s' "$body" | sed -n 's/.*codex-review-state:v1 \({.*}\) -->.*/\1/p' | head -n 1)
+              if [ -n "$st" ]; then
+                cstatus=$(printf '%s' "$st" | jq -r '.code_review.status // ""')
+                cunres=$(printf '%s' "$st" | jq -r '.code_review.has_unresolved_findings')
+                csha=$(printf '%s' "$st" | jq -r '.code_review.commit_sha // ""')
+                if [ "$cstatus" = "completed" ] && [ "$cunres" = "false" ]; then
+                  read -r hsha href pstate < <(gh api "repos/$REPO/pulls/$number" -q '"\(.head.sha) \(.head.ref) \(.state)"')
+                  if [ "$csha" = "$hsha" ] && [ "$pstate" = "open" ] && [[ "$href" == claude/* ]]; then source="codex-clean"; fi
+                fi
+              fi
+            fi
+          elif [ "$login" = "$OWNER" ] && [ "${action:-created}" = "created" ]; then
             first=$(printf '%s' "$body" | sed -n '1{s/^[[:space:]]*//;p}')
             case "$first" in
               "Claude Code"*) source="" ;;
@@ -182,7 +199,7 @@ jobs:
             - 合図のコメント・レビューの URL：${{ github.event.comment.html_url || github.event.review.html_url }}
           claude_args: >-
             --max-turns 120
-            --allowedTools "Read,Edit,Write,Glob,Grep,TodoWrite,Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(cargo:*),Bash(rustc:*),Bash(php:*),Bash(composer:*),Bash(python3:*),Bash(pytest:*),Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(sed:*),Bash(wc:*),Bash(diff:*),Bash(sha256sum:*),Bash(mkdir:*)"
+            --allowedTools "Read,Edit,Write,Glob,Grep,TodoWrite,Bash(git:*),Bash(gh:*),Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(cargo:*),Bash(rustc:*),Bash(php:*),Bash(composer:*),Bash(python3:*),Bash(pytest:*),Bash(gcc:*),Bash(cc:*),Bash(clang:*),Bash(make:*),Bash(go:*),Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(sed:*),Bash(wc:*),Bash(diff:*),Bash(sha256sum:*),Bash(mkdir:*)"
       # クラウドの Codex はボットのコメントには反応しないので、オーナー名義のトークンで頼む。
       # 頼む PR：Claude がファイルに書いた番号と、この実行で先頭のコミットが変わった対象の PR。
       - name: Codex にレビューを頼む
