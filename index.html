@@ -440,6 +440,8 @@ dialog::backdrop { background: rgba(14, 21, 48, .5); }
 .price-card small { color: var(--muted); font-size: .82rem; line-height: 1.5; }
 .trust { display: grid; gap: 4px; margin-top: 12px; font-size: .78rem; color: var(--muted); text-align: center; }
 .trust a { color: var(--muted); }
+.acct-newbox { background: var(--accent-soft); border-radius: 12px; padding: 4px 12px; margin-bottom: 8px; }
+.acct-newbox .link { font-weight: 700; }
 .acct-input { width: 100%; font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); margin-bottom: 4px; box-sizing: border-box; }
 .acct-code { font-family: ui-monospace, Consolas, monospace; font-size: 1.15rem; font-weight: 700; letter-spacing: .04em; background: var(--accent-soft); padding: 12px; border-radius: 12px; text-align: center; }
 .acct-error { color: var(--ng); font-size: .9rem; }
@@ -2533,7 +2535,7 @@ renderMinimal();
 setupListen();
 setupUI();
 </script>
-<script src="billing.js?v=4"></script>
+<script src="billing.js?v=5"></script>
 <script src="https://feedback.habatakijuku.com/feedback.js" defer></script>
 </body>
 </html>

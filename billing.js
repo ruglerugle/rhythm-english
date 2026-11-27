@@ -114,15 +114,16 @@ function mountBillingUI() {
     <div class="dlg-head"><h2>アカウント</h2><button class="btn icon" id="acctClose" aria-label="閉じる">✕</button></div>
     <p id="acctMsg" class="note"></p>
     <div data-view="register">
-      <p>表示名（ニックネーム）を決めて、この端末にパスキーを作ります。</p>
+      <p><strong>無料で会員登録</strong>：表示名（ニックネーム）を決めて、この端末にパスキーを作ります。</p>
       <input id="acctName" class="acct-input" maxlength="30" placeholder="ニックネーム" autocomplete="nickname">
       <div class="btn-row"><button class="btn-primary" id="acctRegisterBtn">パスキーを作って続ける</button></div>
-      <p class="note">前に作った方は <button class="link" data-goto="login">パスキーでログイン</button></p>
+      <p class="note">すでにアカウントがある方は <button class="link" data-goto="login">ログイン</button></p>
     </div>
     <div data-view="login" hidden>
-      <p>この端末（または同じアカウントの端末）に保存したパスキーでログインします。</p>
+      <div class="acct-newbox"><p><strong>はじめての方は</strong> <button class="link" data-goto="register">こちらから無料で会員登録</button></p></div>
+      <p>登録ずみの方は、この端末（または同じアカウントの端末）に保存したパスキーでログインします。</p>
       <div class="btn-row"><button class="btn-primary" id="acctLoginBtn">パスキーでログイン</button></div>
-      <p class="note">パスキーをなくした方は <button class="link" data-goto="recover">復旧コードを使う</button>／初めての方は <button class="link" data-goto="register">パスキーを作る</button></p>
+      <p class="note">パスキーをなくした方は <button class="link" data-goto="recover">復旧コードを使う</button></p>
     </div>
     <div data-view="recover" hidden>
       <p>登録したときにメモした復旧コードを入れてください。</p>
@@ -192,8 +193,8 @@ function renderPlan() {
     status = `${account.name} でログイン中（${usageText()}）。有料版にすると、声の自動採点を1日100回まで使えます（${PRICE_LABEL}）。`;
     btns = btn('buy', `有料版にする（${PRICE_LABEL}）`, 'btn gold') + (account.customer ? btn('portal', 'お支払いの履歴') : '') + btn('logout', 'ログアウト');
   } else {
-    status = `有料版（${PRICE_LABEL}）にすると、声の自動採点（発音・リズム・抑揚）を使えます。無料のアカウントを作ると、3回までためせます。`;
-    btns = btn('buy', `有料版にする（${PRICE_LABEL}）`, 'btn gold') + btn('trial', '無料で3回ためす') + btn('login', 'ログイン');
+    status = `有料版（${PRICE_LABEL}）にすると、声の自動採点（発音・リズム・抑揚）を使えます。無料で会員登録すると、3回までためせます。すでに会員の方は「ログイン」からどうぞ。`;
+    btns = btn('buy', `有料版にする（${PRICE_LABEL}）`, 'btn gold') + btn('trial', '無料で会員登録（3回ためせる）', 'btn gold') + btn('login', 'ログイン', 'btn gold');
   }
   const banner = $('premiumBanner');
   if (banner) banner.hidden = account.paid;
